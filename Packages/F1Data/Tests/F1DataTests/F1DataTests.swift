@@ -1,105 +1,68 @@
 import Foundation
-import XCTest
+import Testing
 @testable import F1Data
 
-final class URLProtocolStub: URLProtocol {
-    nonisolated(unsafe) static var stubData: Data?
-    nonisolated(unsafe) static var stubResponse: HTTPURLResponse?
-    nonisolated(unsafe) static var stubError: Error?
-
-    static func reset() {
-        stubData = nil
-        stubResponse = nil
-        stubError = nil
-    }
-
-    override class func canInit(with request: URLRequest) -> Bool {
-        true
-    }
-
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        request
-    }
-
-    override func startLoading() {
-        if let error = Self.stubError {
-            client?.urlProtocol(self, didFailWithError: error)
-            return
-        }
-
-        if let response = Self.stubResponse {
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        }
-
-        if let data = Self.stubData {
-            client?.urlProtocol(self, didLoad: data)
-        }
-
-        client?.urlProtocolDidFinishLoading(self)
-    }
-
-    override func stopLoading() {}
+private func makeClient() -> JolpicaHTTPClient {
+    let configuration = URLSessionConfiguration.ephemeral
+    configuration.protocolClasses = [URLProtocolStub.self]
+    let session = URLSession(configuration: configuration)
+    return JolpicaHTTPClient(session: session)
 }
 
-final class JolpicaHTTPClientTests: XCTestCase {
-    private var session: URLSession!
-    private var client: JolpicaHTTPClient!
-
-    override func setUp() {
-        super.setUp()
-        URLProtocolStub.reset()
-
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [URLProtocolStub.self]
-        session = URLSession(configuration: configuration)
-        client = JolpicaHTTPClient(session: session)
-    }
-
-    override func tearDown() {
-        session.invalidateAndCancel()
-        session = nil
-        client = nil
-        URLProtocolStub.reset()
-        super.tearDown()
-    }
-
+@Suite(.serialized)
+struct JolpicaHTTPClientTests {
+    @Test
     func testNon2xxThrowsInvalidResponse() async {
+        URLProtocolStub.reset()
+        defer { URLProtocolStub.reset() }
+
         let url = URL(string: "https://example.com/races")!
         URLProtocolStub.stubResponse = HTTPURLResponse(url: url, statusCode: 404, httpVersion: nil, headerFields: nil)
         URLProtocolStub.stubData = Data("not found".utf8)
+        let client = makeClient()
 
         do {
             _ = try await client.get(url: url)
-            XCTFail("Expected invalidResponse error")
+            Issue.record("Expected invalidResponse error")
         } catch let error as DataError {
-            XCTAssertEqual(error, .invalidResponse(statusCode: 404))
+            #expect(error == .invalidResponse(statusCode: 404))
         } catch {
-            XCTFail("Unexpected error: \(error)")
+            Issue.record("Unexpected error: \(error)")
         }
     }
 
+    @Test
     func testEmptyDataThrowsEmptyData() async {
+        URLProtocolStub.reset()
+        defer { URLProtocolStub.reset() }
+
         let url = URL(string: "https://example.com/races")!
         URLProtocolStub.stubResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
         URLProtocolStub.stubData = Data()
+        let client = makeClient()
 
         do {
             _ = try await client.get(url: url)
-            XCTFail("Expected emptyData error")
+            Issue.record("Expected emptyData error")
         } catch let error as DataError {
-            XCTAssertEqual(error, .emptyData)
+            #expect(error == .emptyData)
         } catch {
-            XCTFail("Unexpected error: \(error)")
+            Issue.record("Unexpected error: \(error)")
         }
     }
 
+    @Test
     func testSuccessReturnsData() async throws {
+        URLProtocolStub.reset()
+        defer { URLProtocolStub.reset() }
+
         let url = URL(string: "https://example.com/races")!
         let expected = Data("ok".utf8)
         URLProtocolStub.stubResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
         URLProtocolStub.stubData = expected
+        let client = makeClient()
 
         let data = try await client.get(url: url)
-        XCTAssertEqual(data, expected)
+        #expect(data == expected)
     }
 }
