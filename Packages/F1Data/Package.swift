@@ -24,7 +24,10 @@ let package = Package(
         ),
         .testTarget(
             name: "F1DataTests",
-            dependencies: ["F1Data"]
+            dependencies: ["F1Data"],
+            resources: [
+                .process("Helpers/Fixtures")
+            ]
         ),
     ]
 )
