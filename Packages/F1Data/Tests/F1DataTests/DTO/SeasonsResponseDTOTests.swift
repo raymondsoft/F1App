@@ -10,7 +10,7 @@ struct SeasonsResponseDTOTests {
         decoder = JSONDecoder()
     }
 
-    @Test("Decoding seasons fixture succeeds")
+    @Test("SeasonsResponseDTO should decode seasons fixture")
     func testDecodingSucceeds() throws {
         // Given
         // When
