@@ -11,7 +11,7 @@ private func makeClient() -> JolpicaHTTPClient {
 
 @Suite(.serialized)
 struct JolpicaHTTPClientTests {
-    @Test
+    @Test("Non-2xx response should throw invalidResponse error")
     func testNon2xxThrowsInvalidResponse() async {
         URLProtocolStub.reset()
         defer { URLProtocolStub.reset() }
@@ -31,7 +31,7 @@ struct JolpicaHTTPClientTests {
         }
     }
 
-    @Test
+    @Test("Empty response body should throw emptyData error")
     func testEmptyDataThrowsEmptyData() async {
         URLProtocolStub.reset()
         defer { URLProtocolStub.reset() }
@@ -51,7 +51,7 @@ struct JolpicaHTTPClientTests {
         }
     }
 
-    @Test
+    @Test("Valid 2xx response should return data")
     func testSuccessReturnsData() async throws {
         URLProtocolStub.reset()
         defer { URLProtocolStub.reset() }
