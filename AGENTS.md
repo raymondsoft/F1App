@@ -218,3 +218,102 @@ Agents operate under these priorities:
 5. Reusability (only when justified)
 
 Clarity and architectural consistency always take precedence over convenience.
+
+---
+
+## 14. Git workflow (mandatory)
+
+Agents must use a structured Git workflow for every task.
+
+### Branching
+
+Agents must NEVER commit directly to main (or default branch).
+
+For each task, create a dedicated branch:
+
+feature/<short-description>
+fix/<short-description>
+refactor/<short-description>
+test/<short-description>
+
+Branch name should reflect the task scope.
+
+Example:
+feature/data-races-dto
+
+---
+
+### Commits
+
+Agents must create meaningful commits.
+
+Rules:
+- group related changes into logical commits
+- do not create one giant commit when multiple logical steps exist
+- do not create excessive micro-commits
+
+Each commit message must be descriptive and structured.
+
+Preferred format:
+
+<type>: <short summary>
+
+Examples:
+feat: add RacesResponseDTO
+test: add decoding tests for races endpoint
+refactor: extract HTTPClient protocol
+
+---
+
+### Commit message requirements
+
+Commit messages must explain:
+
+- what was implemented
+- why it was implemented (if not obvious)
+- scope of change
+
+Avoid vague messages like:
+"update"
+"fix stuff"
+"changes"
+
+---
+
+### Before finishing a task
+
+Agent must ensure:
+
+- branch is up to date with base branch
+- project builds
+- tests pass
+- changes are committed
+
+Agent must report:
+
+- branch name
+- commit list
+- final status
+
+---
+
+### Forbidden Git actions
+
+Agents must NEVER:
+
+- commit directly to main
+- rewrite history of shared branches
+- force push without explicit permission
+- create unrelated changes in the same branch
+- mix multiple features in one branch
+
+---
+
+### Definition of task completion (Git)
+
+A task is not complete until:
+
+- changes are committed
+- work is isolated in a dedicated branch
+- commit messages are structured
+- agent reports Git status
