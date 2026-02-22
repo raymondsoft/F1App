@@ -13,10 +13,10 @@ struct SeasonsResponseDTOTests {
     @Test("Decoding seasons fixture succeeds")
     func testDecodingSucceeds() throws {
         // Given
-        let data = try loadFixture(named: "seasons")
+        let expectedFixtureName = "seasons"
 
         // When
-        let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
+        let response = try decodeFixture(named: expectedFixtureName)
 
         // Then
         #expect(!response.mrData.seasonTable.seasons.isEmpty)
@@ -25,31 +25,32 @@ struct SeasonsResponseDTOTests {
     @Test("Decoded seasons count matches fixture")
     func testSeasonsCount() throws {
         // Given
-        let data = try loadFixture(named: "seasons")
+        let expectedCount = 3
 
         // When
-        let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
+        let response = try decodeFixture()
 
         // Then
-        #expect(response.mrData.seasonTable.seasons.count == 3)
+        #expect(response.mrData.seasonTable.seasons.count == expectedCount)
     }
 
     @Test("Decoded season fields match expected values")
     func testSeasonFields() throws {
         // Given
-        let data = try loadFixture(named: "seasons")
+        let expectedSeason = "2023"
+        let expectedURL = "https://en.wikipedia.org/wiki/2023_Formula_One_World_Championship"
 
         // When
-        let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
+        let response = try decodeFixture()
         let first = response.mrData.seasonTable.seasons[0]
 
         // Then
-        #expect(first.season == "2023")
-        #expect(first.url == "https://en.wikipedia.org/wiki/2023_Formula_One_World_Championship")
+        #expect(first.season == expectedSeason)
+        #expect(first.url == expectedURL)
     }
 
-    private func loadFixture(named name: String) throws -> Data {
-        let fixtureURL = try #require(Bundle.module.url(forResource: name, withExtension: "json"))
-        return try Data(contentsOf: fixtureURL)
+    private func decodeFixture(named name: String = "seasons") throws -> SeasonsResponseDTO {
+        let data = try loadJSONFixture(named: name)
+        return try decoder.decode(SeasonsResponseDTO.self, from: data)
     }
 }
