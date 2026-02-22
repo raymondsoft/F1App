@@ -16,6 +16,8 @@ Before implementing anything, read:
 
 If any rule conflicts with the task, STOP and ask for clarification.
 
+Agents must be able to explain which rules apply to the current task before implementation.
+
 ---
 
 ## 2. Scope of work
@@ -46,6 +48,9 @@ For every task:
 7. Ensure tests pass
 8. Report results
 
+Agents must prefer the smallest correct implementation.
+Avoid speculative design or future-proof abstractions.
+
 ---
 
 ## 4. Testing discipline
@@ -55,12 +60,98 @@ When tests are involved:
 - Use Swift Testing
 - Follow Given / When / Then structure
 - Keep test suites self-contained
-- Place helpers in Tests/.../Helpers
+- Place shared helpers in Tests/.../Helpers
 - Ensure deterministic behavior
+- Prefer explicit tests over abstract tests
+- Tests must remain readable without navigating helper implementations
+
+DTO decoding tests must show the decoding step explicitly unless otherwise instructed.
 
 ---
 
-## 5. Communication rules
+## 5. Test helper policy
+
+Two categories of helpers exist.
+
+### Shared helpers
+Reusable infrastructure utilities.
+
+Examples:
+- loadJSONFixture(named:)
+
+Rules:
+- must be generic
+- stored in Tests/<Module>Tests/Helpers/
+- may be reused across suites
+
+### Local helpers
+Express the intent of a specific test suite.
+
+Examples:
+- decodeSeasonsFixture()
+
+Rules:
+- must NOT be generic
+- must NOT introduce parameters if fixture is fixed
+- must express test semantics
+- must remain private to the suite
+
+Local helpers represent the semantic contract of the test suite.
+
+---
+
+## 6. DTO implementation rules
+
+When implementing response DTOs:
+
+- One root response DTO per file
+- Represent JSON hierarchy using nested types
+- Do not create independent top-level DTO types for nested structures
+- DTOs must remain internal to the Data layer unless explicitly required
+- DTOs represent raw external data only
+- No business logic inside DTOs
+
+Separate DTO files only when a type is reused across multiple endpoints.
+
+---
+
+## 7. Abstraction policy
+
+Avoid premature abstraction.
+
+Do NOT extract helpers or shared logic unless:
+
+- duplication appears multiple times
+- abstraction improves readability
+- abstraction does not hide system behavior
+
+Clarity is preferred over DRY in small scopes.
+
+---
+
+## 8. Documentation update policy
+
+Agents must update documentation when implementation decisions become stable.
+
+Agents may update:
+
+- DTO organization rules
+- test structure rules
+- helper design rules
+- file structure conventions
+- feature implementation status
+
+Agents must NOT modify:
+
+- architecture principles
+- layer responsibilities
+- system design philosophy
+
+If unsure, ask before modifying documentation.
+
+---
+
+## 9. Communication rules
 
 Agents must:
 
@@ -69,23 +160,26 @@ Agents must:
 - list modified files
 - explain architectural impact
 - confirm build and test status
+- explain why design choices were made
+- identify any rule interpretation applied
 
 ---
 
-## 6. Forbidden actions
+## 10. Forbidden actions
 
 Agents must NEVER:
 
 - silently change architecture
 - introduce global mutable state
 - bypass layer boundaries
-- add monolithic files
+- add monolithic files without justification
 - switch test frameworks
 - modify files outside scope
+- introduce generic abstractions without explicit need
 
 ---
 
-## 7. Definition of done
+## 11. Definition of done
 
 A task is complete only if:
 
@@ -93,6 +187,34 @@ A task is complete only if:
 - tests pass
 - rules are respected
 - scope respected
-- changes documented
+- changes documented (if required)
+- behavior verified
 
 Agent must report completion explicitly.
+
+---
+
+## 12. Failure protocol
+
+If an agent cannot complete a task safely, it must:
+
+1. Stop implementation
+2. Describe the blocking issue
+3. Explain why rules prevent progress
+4. Propose possible solutions
+
+Agents must never guess architecture decisions.
+
+---
+
+## 13. Principle of operation
+
+Agents operate under these priorities:
+
+1. Correctness
+2. Architectural integrity
+3. Clarity
+4. Minimal change
+5. Reusability (only when justified)
+
+Clarity and architectural consistency always take precedence over convenience.
