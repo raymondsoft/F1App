@@ -1,30 +1,30 @@
 import Foundation
 
-public struct SeasonsResponseDTO: Decodable {
-    public let mrData: MRDataDTO
+struct SeasonsResponseDTO: Decodable {
+    let mrData: MRData
 
     enum CodingKeys: String, CodingKey {
         case mrData = "MRData"
     }
-}
 
-public struct MRDataDTO: Decodable {
-    public let seasonTable: SeasonTableDTO
+    struct MRData: Decodable {
+        let seasonTable: SeasonTable
 
-    enum CodingKeys: String, CodingKey {
-        case seasonTable = "SeasonTable"
+        enum CodingKeys: String, CodingKey {
+            case seasonTable = "SeasonTable"
+        }
+
+        struct SeasonTable: Decodable {
+            let seasons: [Season]
+
+            enum CodingKeys: String, CodingKey {
+                case seasons = "Seasons"
+            }
+
+            struct Season: Decodable {
+                let season: String
+                let url: String
+            }
+        }
     }
-}
-
-public struct SeasonTableDTO: Decodable {
-    public let seasons: [SeasonDTO]
-
-    enum CodingKeys: String, CodingKey {
-        case seasons = "Seasons"
-    }
-}
-
-public struct SeasonDTO: Decodable {
-    public let season: String
-    public let url: String
 }
