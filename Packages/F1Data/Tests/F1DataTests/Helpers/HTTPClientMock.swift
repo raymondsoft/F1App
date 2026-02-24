@@ -1,7 +1,7 @@
 import Foundation
 @testable import F1Data
 
-final class HTTPClientSpy: HTTPClient {
+final class HTTPClientMock: HTTPClient {
     enum Result {
         case success(Data)
         case failure(any Error)
