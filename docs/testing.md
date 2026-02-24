@@ -51,14 +51,94 @@ Important operations must remain visible inside the test body.
 
 ## SUT guidelines (required)
 
-- SUT must be owned by the suite (no top-level helper constructors).
-- Prefer typing SUT as a protocol when possible.
-- Construction must happen in suite initializer or inside test.
-- Tests must be deterministic.
+The System Under Test (SUT) must be clearly visible and understandable from the test itself.
 
-Example structure:
+Tests must never hide SUT construction behind file-level helper functions.
 
-    @Suite(.serialized)
+---
+
+### Construction rules
+
+The SUT may be constructed in ONE of the following places:
+
+1) Suite initializer  
+   Use when the same configuration is shared by all tests.
+
+2) Inside each test  
+   Use when tests require different configurations (different stubs, inputs, failures, etc.).
+
+Both approaches are valid.
+
+Choose the one that maximizes readability and clarity.
+
+---
+
+### Forbidden patterns
+
+The following are NOT allowed:
+
+- Top-level helper constructors
+  Example (forbidden):
+
+    private func makeSUT() -> SomeType { ... }
+
+- Hidden configuration outside the test or suite initializer
+- Implicit global state affecting SUT construction
+
+SUT creation must be explicit and local to the test suite.
+
+---
+
+### Visibility requirement
+
+A reader must be able to identify:
+
+- what the SUT is
+- how it is constructed
+- which dependencies it receives
+
+without navigating to other files.
+
+If SUT construction is not immediately understandable, the test is considered invalid.
+
+---
+
+### Typing guideline (recommended)
+
+When possible, type the SUT as a protocol rather than a concrete implementation.
+
+Example:
+
+    let sut: HTTPClient
+
+instead of:
+
+    let sut: JolpicaHTTPClient
+
+This improves test abstraction and decoupling.
+
+This is recommended but not mandatory.
+
+---
+
+### Determinism
+
+Tests must be deterministic.
+
+SUT construction must not rely on:
+
+- time
+- randomness
+- environment state
+- external systems
+
+All dependencies must be controlled by the test.
+
+---
+
+### Example — shared configuration
+
+    @Suite
     struct ExampleTests {
         let sut: SomeProtocol
 
@@ -69,6 +149,24 @@ Example structure:
         @Test("Behavior description")
         func testSomething() async throws {
             // Given
+            // When
+            // Then
+        }
+    }
+
+---
+
+### Example — test-specific configuration
+
+    @Suite
+    struct ExampleTests {
+
+        @Test("Handles network failure")
+        func testFailure() async throws {
+            // Given
+            let stub = FailingHTTPClient()
+            let sut = ConcreteType(client: stub)
+
             // When
             // Then
         }
