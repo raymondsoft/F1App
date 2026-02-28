@@ -18,7 +18,7 @@ struct CircuitRowTests {
         )
 
         // When
-        let row = F1UI.Circuit.Row(viewData)
+        let _ = F1UI.Circuit.Row(viewData)
 
         // Then
         #expect(viewData.id == "silverstone")
@@ -26,7 +26,6 @@ struct CircuitRowTests {
         #expect(viewData.locality == "Silverstone")
         #expect(viewData.country == "United Kingdom")
         #expect(viewData.showsWikipediaIndicator)
-        _ = row
     }
 }
 
