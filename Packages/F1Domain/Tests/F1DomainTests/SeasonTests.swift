@@ -36,4 +36,19 @@ struct SeasonTests {
         // Then
         #expect(rawValue == "1950")
     }
+
+    @Test("Season supports a missing wikipedia URL")
+    func seasonSupportsMissingWikipediaURL() {
+        // Given
+        let season = Season(
+            id: .init(rawValue: "1950"),
+            wikipediaURL: nil
+        )
+
+        // When
+        let wikipediaURL = season.wikipediaURL
+
+        // Then
+        #expect(wikipediaURL == nil)
+    }
 }

@@ -1,20 +1,47 @@
 import Foundation
 
 public struct Race: Hashable, Sendable {
+    public struct Round: RawRepresentable, Hashable, Sendable {
+        public let rawValue: String
+
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+    }
+
+    public struct Time: Hashable, Sendable {
+        public let hour: Int
+        public let minute: Int
+        public let second: Int
+        public let utcOffsetSeconds: Int
+
+        public init(
+            hour: Int,
+            minute: Int,
+            second: Int,
+            utcOffsetSeconds: Int = 0
+        ) {
+            self.hour = hour
+            self.minute = minute
+            self.second = second
+            self.utcOffsetSeconds = utcOffsetSeconds
+        }
+    }
+
     public let seasonId: Season.ID
-    public let round: String
+    public let round: Round
     public let name: String
     public let date: Date
-    public let time: String?
+    public let time: Time?
     public let wikipediaURL: URL?
     public let circuit: Circuit
 
     public init(
         seasonId: Season.ID,
-        round: String,
+        round: Round,
         name: String,
         date: Date,
-        time: String?,
+        time: Time?,
         wikipediaURL: URL?,
         circuit: Circuit
     ) {
