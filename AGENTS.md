@@ -11,7 +11,7 @@ Before implementing anything, read:
 
 1. ENGINEERING_RULES.md
 2. docs/testing.md (if tests are involved)
-3. Package-specific rules (if present)
+3. Package-specific `*_AGENTS.md` files before modifying any package; if present, they are mandatory reading and complement the global rules
 4. The assigned task / issue
 
 If any rule conflicts with the task, STOP and ask for clarification.
