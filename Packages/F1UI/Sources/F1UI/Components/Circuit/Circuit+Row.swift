@@ -39,6 +39,7 @@ public extension F1UI.Circuit {
                     Text("\(viewData.locality), \(viewData.country)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .accessibilityLabel("\(viewData.locality), \(viewData.country)")
                 }
 
                 Spacer(minLength: 0)
