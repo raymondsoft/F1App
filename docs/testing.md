@@ -2,7 +2,7 @@
 
 This document defines how tests must be written in this repository.
 
-Tests are executable documentation.
+Tests are executable documentation.  
 They must clearly explain system behavior and structure.
 
 If a test is hard to read, it is considered incorrect even if it passes.
@@ -23,14 +23,14 @@ If a test is hard to read, it is considered incorrect even if it passes.
 
 Each test must explicitly contain:
 
-    // Given
-    (set up data, stubs, fixtures)
+// Given  
+(set up data, stubs, fixtures)
 
-    // When
-    (call SUT)
+// When  
+(call SUT)
 
-    // Then
-    (assert expected behavior)
+// Then  
+(assert expected behavior)
 
 Sections must always be visible, even if minimal.
 
@@ -49,7 +49,7 @@ Important operations must remain visible inside the test body.
 
 ---
 
-## SUT guidelines (required)
+# SUT guidelines (required)
 
 The System Under Test (SUT) must be clearly visible and understandable from the test itself.
 
@@ -57,7 +57,7 @@ Tests must never hide SUT construction behind file-level helper functions.
 
 ---
 
-### Construction rules
+## Construction rules
 
 The SUT may be constructed in ONE of the following places:
 
@@ -73,15 +73,11 @@ Choose the one that maximizes readability and clarity.
 
 ---
 
-### Forbidden patterns
+## Forbidden patterns
 
 The following are NOT allowed:
 
-- Top-level helper constructors
-  Example (forbidden):
-
-    private func makeSUT() -> SomeType { ... }
-
+- Top-level helper constructors (e.g. `private func makeSUT()`)
 - Hidden configuration outside the test or suite initializer
 - Implicit global state affecting SUT construction
 
@@ -89,7 +85,7 @@ SUT creation must be explicit and local to the test suite.
 
 ---
 
-### Visibility requirement
+## Visibility requirement
 
 A reader must be able to identify:
 
@@ -103,17 +99,17 @@ If SUT construction is not immediately understandable, the test is considered in
 
 ---
 
-### Typing guideline (recommended)
+## Typing guideline (recommended)
 
 When possible, type the SUT as a protocol rather than a concrete implementation.
 
 Example:
 
-    let sut: HTTPClient
+let sut: HTTPClient
 
 instead of:
 
-    let sut: JolpicaHTTPClient
+let sut: JolpicaHTTPClient
 
 This improves test abstraction and decoupling.
 
@@ -121,7 +117,7 @@ This is recommended but not mandatory.
 
 ---
 
-### Determinism
+## Determinism
 
 Tests must be deterministic.
 
@@ -136,45 +132,45 @@ All dependencies must be controlled by the test.
 
 ---
 
-### Example — shared configuration
+## Example — shared configuration
 
-    @Suite
-    struct ExampleTests {
-        let sut: SomeProtocol
+@Suite
+struct ExampleTests {
+    let sut: SomeProtocol
 
-        init() {
-            self.sut = ConcreteType(...)
-        }
-
-        @Test("Behavior description")
-        func testSomething() async throws {
-            // Given
-            // When
-            // Then
-        }
+    init() {
+        self.sut = ConcreteType(...)
     }
+
+    @Test("Behavior description")
+    func testSomething() async throws {
+        // Given
+        // When
+        // Then
+    }
+}
 
 ---
 
-### Example — test-specific configuration
+## Example — test-specific configuration
 
-    @Suite
-    struct ExampleTests {
+@Suite
+struct ExampleTests {
 
-        @Test("Handles network failure")
-        func testFailure() async throws {
-            // Given
-            let stub = FailingHTTPClient()
-            let sut = ConcreteType(client: stub)
+    @Test("Handles network failure")
+    func testFailure() async throws {
+        // Given
+        let stub = FailingHTTPClient()
+        let sut = ConcreteType(client: stub)
 
-            // When
-            // Then
-        }
+        // When
+        // Then
     }
+}
 
 ---
 
-## DTO decoding tests (special rules)
+# DTO decoding tests (special rules)
 
 DTO decoding tests document the external API contract.
 
@@ -188,14 +184,14 @@ Do NOT hide decoding behind generic helpers unless duplication becomes significa
 
 Preferred pattern:
 
-    let data = try loadJSONFixture(named: "seasons")
-    let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
+let data = try loadJSONFixture(named: "seasons")  
+let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
 
 DTO tests must remain explicit and self-explanatory.
 
 ---
 
-## Fixtures
+# JSON Fixtures
 
 JSON fixtures represent real external data samples.
 
@@ -204,43 +200,160 @@ Rules:
 - Fixtures must be realistic
 - Fixtures must live with tests
 - Fixtures must be loaded via shared helper
-- Fixture loading must use Bundle.module
+- Fixture loading must use `Bundle.module`
 
-Example shared helper location:
+Shared helper location:
 
-    Tests/<Module>Tests/Helpers/loadJSONFixture(named:)
+Tests/<Module>Tests/Helpers/loadJSONFixture(named:)
 
 ---
 
-## Test helpers
+# Model Fixtures (Test Data Builders)
+
+Fixtures are allowed to simplify model setup and improve readability.
+
+They must follow these rules strictly.
+
+---
+
+## Location
+
+Model fixtures must live in the test target only:
+
+Tests/<Module>Tests/Helpers/
+
+They must never appear in production code (Sources/).
+
+---
+
+## Purpose
+
+Fixtures exist to:
+
+- reduce setup noise
+- make test intent clearer
+- provide valid default instances
+
+They must NOT hide test logic.
+
+A reader must still understand what is being tested without inspecting fixture implementation.
+
+---
+
+## Deterministic defaults (required)
+
+Fixtures must use deterministic, stable default values.
+
+Forbidden defaults:
+
+- Date()
+- random values
+- environment-dependent values
+- current time
+- generated identifiers
+
+Allowed defaults:
+
+- fixed timestamps
+- constant strings
+- fixed coordinates
+- explicit known values
+
+Example:
+
+Date(timeIntervalSince1970: 0)
+
+---
+
+## Explicit override rule (required)
+
+Tests must explicitly override the field relevant to the behavior being tested.
+
+Correct:
+
+let race = Race.fixture(time: nil)
+
+Incorrect (hidden intent):
+
+let race = Race.fixture()
+
+The test must clearly communicate what varies.
+
+---
+
+## Scope
+
+Fixtures must only create valid domain objects.
+
+They must not:
+
+- perform business logic
+- simulate behavior
+- validate rules
+- contain conditional branching based on test context
+
+They are data builders only.
+
+---
+
+## Structure
+
+Prefer static factory methods scoped to the model:
+
+extension Race {
+    static func fixture(...)
+}
+
+Avoid generic or global test factories.
+
+---
+
+## When NOT to use fixtures
+
+Do not use fixtures when:
+
+- object construction is already simple
+- test clarity would decrease
+- defaults would hide important information
+
+Explicit construction is always acceptable.
+
+---
+
+# Test helpers
 
 Two types of helpers exist.
 
-### Shared helpers
+## Shared helpers
 
 Reusable infrastructure utilities.
 
 Examples:
+
 - fixture loading
 - generic test doubles
 - common assertions
 
 Rules:
+
 - generic
 - reusable across suites
 - stored in:
-  Tests/<Module>Tests/Helpers/
+
+Tests/<Module>Tests/Helpers/
 
 ---
 
-### Local helpers (suite-specific)
+## Local helpers (suite-specific)
 
 Local helpers express the semantic intent of a specific test suite.
 
 Examples:
-- decodeSeasonsFixture()
+
+decodeSeasonsFixture()
 
 Rules:
+
 - must NOT be generic
 - must NOT introduce parameters when fixture is fixed
 - must remain private
@@ -251,11 +364,11 @@ Local helpers represent the contract of the suite.
 
 ---
 
-## Test doubles
+# Test doubles
 
 Test doubles must live in:
 
-    Tests/<Module>Tests/Helpers/
+Tests/<Module>Tests/Helpers/
 
 Naming rules:
 
@@ -267,13 +380,13 @@ Names must reflect actual behavior.
 
 ---
 
-## Assertions
+# Assertions
 
 Assertions must be explicit and readable.
 
 Prefer:
 
-    #expect(value == expected)
+#expect(value == expected)
 
 Avoid complex expressions inside a single assertion.  
 Prefer multiple simple assertions.
@@ -282,7 +395,7 @@ Assertions must communicate intent clearly.
 
 ---
 
-## Concurrency / global state
+# Concurrency / global state
 
 Avoid global mutable state.
 
@@ -293,11 +406,11 @@ If unavoidable:
 
 Suites requiring isolation must use:
 
-    @Suite(.serialized)
+@Suite(.serialized)
 
 ---
 
-## Abstraction policy
+# Abstraction policy
 
 Avoid premature abstraction in tests.
 
@@ -311,7 +424,7 @@ Tests prioritize clarity over DRY in small scopes.
 
 ---
 
-## Visibility rules
+# Visibility rules
 
 - Shared helpers → internal or module-visible
 - Local helpers → private
@@ -321,23 +434,23 @@ Never expose test-only utilities to production code.
 
 ---
 
-## Naming conventions
+# Naming conventions
 
 Test names must describe behavior, not implementation.
 
 Good:
 
-    @Test("SeasonsResponseDTO should decode seasons fixture")
+@Test("SeasonsResponseDTO should decode seasons fixture")
 
 Bad:
 
-    @Test("Test decoding")
+@Test("Test decoding")
 
 Names must describe expected outcome.
 
 ---
 
-## Determinism
+# Determinism
 
 Tests must not depend on:
 
@@ -350,7 +463,7 @@ All inputs must be controlled.
 
 ---
 
-## What a good test looks like
+# What a good test looks like
 
 A reader must understand:
 
