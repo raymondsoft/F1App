@@ -38,7 +38,7 @@ public struct SeasonsScreen: View {
 
         case .loaded(let seasons):
             List(seasons, id: \.title) { season in
-                F1UI.Season.Row(data: season)
+                F1UI.Season.Row(season)
             }
 
         case .error(let message):
@@ -73,7 +73,7 @@ public struct SeasonsScreen: View {
         }
     }
 
-    private static func makeRowData(from season: Season) -> F1UI.Season.Row.Data {
+    private static func makeRowData(from season: Season) -> F1UI.Season.Row.ViewData {
         .init(
             title: season.id.rawValue,
             showsWikipediaIndicator: season.wikipediaURL != nil
@@ -85,7 +85,7 @@ extension SeasonsScreen {
     enum ViewState {
         case idle
         case loading
-        case loaded([F1UI.Season.Row.Data])
+        case loaded([F1UI.Season.Row.ViewData])
         case error(String)
     }
 }

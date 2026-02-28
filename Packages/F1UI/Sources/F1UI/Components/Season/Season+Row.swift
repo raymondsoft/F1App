@@ -2,7 +2,7 @@ import SwiftUI
 
 public extension F1UI.Season {
     struct Row: View {
-        public struct Data: Hashable, Sendable {
+        public struct ViewData: Hashable, Sendable {
             public let title: String
             public let showsWikipediaIndicator: Bool
 
@@ -12,20 +12,20 @@ public extension F1UI.Season {
             }
         }
 
-        private let data: Data
+        private let viewData: ViewData
 
-        public init(data: Data) {
-            self.data = data
+        public init(_ viewData: ViewData) {
+            self.viewData = viewData
         }
 
         public var body: some View {
             HStack(spacing: 12) {
-                Text(data.title)
+                Text(viewData.title)
                     .font(.headline)
 
                 Spacer(minLength: 0)
 
-                if data.showsWikipediaIndicator {
+                if viewData.showsWikipediaIndicator {
                     Label("Wikipedia", systemImage: "link")
                         .font(.caption.weight(.semibold))
                         .labelStyle(.iconOnly)
@@ -40,7 +40,7 @@ public extension F1UI.Season {
 
 #Preview("Season Row") {
     F1UI.Season.Row(
-        data: .init(
+        .init(
             title: "2024",
             showsWikipediaIndicator: true
         )
