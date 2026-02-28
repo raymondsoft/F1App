@@ -1,0 +1,16 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+.build/
+.swiftpm/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcuserdatad/
+*.xcuserstate
+*.log
+*.tmp
+*.swp
+*.bak
+*.xcarchive
+.idea/
+.vscode/
