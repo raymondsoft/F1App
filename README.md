@@ -10,8 +10,8 @@ The repository is structured around Clean Architecture boundaries.
 
 - `F1Domain` is the core domain layer. It defines stable business entities and repository contracts.
 - `F1Data` is the data layer. It talks to the external Jolpica API, decodes transport models, validates and maps them into domain entities, and provides a concrete repository implementation.
-- `F1UseCases` is the package reserved for application-specific orchestration. It exists, but is currently only a placeholder target.
-- `F1UI` is the package reserved for presentation code. Its UI architecture is documented around namespaced components, nested SwiftUI views, screen-driven mapping, and strict separation between reusable components and screens. The package target itself is still a placeholder.
+- `F1UseCases` is the application layer. It orchestrates domain-facing actions such as loading seasons and races through repository abstractions.
+- `F1UI` is the presentation package. It currently contains the first implemented UI slice and follows namespaced components, nested SwiftUI views, screen-driven mapping, and strict separation between reusable components and screens.
 - `F1App` is the app composition layer. At the moment it still contains the default SwiftUI and SwiftData template code rather than F1-specific wiring.
 
 The implemented architecture already follows several important rules:
@@ -26,8 +26,8 @@ The implemented architecture already follows several important rules:
 
 - `F1Domain`: domain entities (`Season`, `Race`, `Circuit`, `Location`) and the `F1Repository` protocol.
 - `F1Data`: Jolpica API client code, DTOs, mapping logic, data errors, and `JolpicaF1Repository`.
-- `F1UseCases`: placeholder package for use-case orchestration.
-- `F1UI`: placeholder package for reusable presentation code.
+- `F1UseCases`: use-case orchestration built on `F1Domain` repository contracts.
+- `F1UI`: SwiftUI presentation package using namespaced components, screen-owned mapping, and explicit UI state.
 
 ## Dependency direction
 
@@ -39,9 +39,12 @@ Dependency flow is intentionally constrained.
 - DTOs and networking stay in `F1Data`.
 - The app target is expected to compose the layers rather than invert dependencies.
 
-Today, the only implemented package dependency is:
+Implemented package dependencies today are:
 
-`F1Data -> F1Domain`
+- `F1Data -> F1Domain`
+- `F1UseCases -> F1Domain`
+- `F1UI -> F1UseCases`
+- `F1UI -> F1Domain`
 
 The documented UI dependency direction is:
 
@@ -58,7 +61,9 @@ At a high level:
 
 - reusable UI elements live under the `F1UI` namespace using nested Swift types such as `F1UI.Race.Row`
 - screens own loading, error handling, navigation, and Domain-to-UI mapping
-- small components remain pure rendering units that receive prepared UI data
+- small components remain pure rendering units that receive prepared `ViewData`
+- screens inject use cases as async closures instead of storing optional runtime dependencies
+- screens map failures to user-friendly messages instead of exposing raw technical errors
 - the UI layer does not construct repositories or access networking directly
 
 ## Build and test
@@ -137,15 +142,16 @@ Implemented:
 - domain entities for seasons, races, circuits, and locations
 - the `F1Repository` domain protocol
 - a concrete Jolpica-backed data repository in `F1Data`
+- `F1UseCases` with season and race loading use cases
 - DTO decoding for seasons and races
 - explicit DTO-to-domain mapping
 - strict parsing and validation for date, time, and coordinate fields
 - package-level tests for domain entities, DTO decoding, mapping, networking, and repository behavior
+- first UI implementation slice with `F1UI.Season.Row`, `SeasonsScreen`, and UI mapping tests
 
-Declared but not yet implemented beyond placeholders:
+Not yet implemented:
 
-- `F1UseCases`
-- `F1UI` package code, although its target architecture is now documented
+- remaining `F1UI` screens and components beyond the initial seasons slice
 
 Not yet integrated into the F1 architecture:
 

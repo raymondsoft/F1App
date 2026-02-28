@@ -37,23 +37,34 @@ This package contains SwiftUI screens, namespaced UI components, presentation mo
 ## Components rules
 
 - Components are small reusable rendering units.
-- Components must receive prepared UI data.
+- Components must define a nested `ViewData` type.
+- Components must receive prepared `ViewData`.
+- Components must store it as a private `viewData`.
 - Components must remain pure rendering code.
 - Components must not have dedicated view models.
 - Components must not perform async work.
 - Components must not manage loading or error state.
 - Components must not depend on repositories.
 - Components must not execute use cases.
+- Components must not map domain models.
+- Components must not contain business logic.
+- Do not use generic nested type names such as `Data` or `Model`; use `ViewData`.
 
 ## Screens rules
 
 - Screens are application flow entry points.
-- Screens may call use cases.
+- Screens call use cases.
 - Screens handle loading, error, and navigation state.
 - Screens compose components.
 - Screens perform Domain-to-UI mapping directly or through a screen-specific view model.
 - Do not apply a ViewModel-per-view pattern across the package.
 - Do not move screen responsibilities into reusable components.
+- Screens must not store optional runtime dependencies.
+- Inject runtime dependencies as non-optional async closures.
+- Screens must not expose `error.localizedDescription` directly to users.
+- Map technical errors to user-friendly messages inside the screen.
+- Model state explicitly with `idle`, `loading`, `loaded`, and `error` when that pattern fits the screen.
+- Keep screen state deterministic and `Equatable` when possible.
 
 ## Mapping rules
 
@@ -87,5 +98,8 @@ Stop and ask for clarification if any requested change:
 - moves Domain-to-UI mapping into `F1Data` or `F1Domain`
 - introduces a ViewModel-per-view pattern for small reusable components
 - asks a component to perform async work or execute use cases
+- asks a component to accept domain models directly instead of prepared `ViewData`
+- asks a screen to keep optional runtime dependencies
+- asks a screen to surface raw technical error descriptions to users
 - requires `F1UI` to construct repositories or clients
 - conflicts with `ENGINEERING_RULES.md` or other package rules
