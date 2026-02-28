@@ -1,7 +1,7 @@
 import Foundation
 @testable import F1Data
 
-final class HTTPClientMock: HTTPClient {
+final class HTTPClientMock: @unchecked Sendable, HTTPClient {
     enum Result {
         case success(Data)
         case failure(any Error)
