@@ -7,15 +7,8 @@ struct SeasonTests {
     @Test("Seasons with the same values are equal and hash the same")
     func seasonsWithSameValuesAreEqual() {
         // Given
-        let wikipediaURL = URL(string: "https://en.wikipedia.org/wiki/2024_Formula_One_World_Championship")
-        let firstSeason = Season(
-            id: .init(rawValue: "2024"),
-            wikipediaURL: wikipediaURL
-        )
-        let secondSeason = Season(
-            id: .init(rawValue: "2024"),
-            wikipediaURL: wikipediaURL
-        )
+        let firstSeason = Season.fixture(id: .init(rawValue: "2024"))
+        let secondSeason = Season.fixture(id: .init(rawValue: "2024"))
 
         // When
         let seasons = Set([firstSeason, secondSeason])
@@ -40,7 +33,7 @@ struct SeasonTests {
     @Test("Season supports a missing wikipedia URL")
     func seasonSupportsMissingWikipediaURL() {
         // Given
-        let season = Season(
+        let season = Season.fixture(
             id: .init(rawValue: "1950"),
             wikipediaURL: nil
         )

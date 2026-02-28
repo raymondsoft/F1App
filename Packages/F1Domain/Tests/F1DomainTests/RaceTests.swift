@@ -7,36 +7,15 @@ struct RaceTests {
     @Test("Races with the same values are equal and hash the same")
     func racesWithSameValuesAreEqual() {
         // Given
-        let raceDate = Date(timeIntervalSince1970: 1_710_028_800)
-        let location = Location(
-            latitude: 26.0325,
-            longitude: 50.5106,
-            locality: "Sakhir",
-            country: "Bahrain"
-        )
-        let circuit = Circuit(
-            id: .init(rawValue: "bahrain"),
-            name: "Bahrain International Circuit",
-            wikipediaURL: URL(string: "https://en.wikipedia.org/wiki/Bahrain_International_Circuit"),
-            location: location
-        )
-        let firstRace = Race(
+        let firstRace = Race.fixture(
             seasonId: .init(rawValue: "2024"),
             round: .init(rawValue: "1"),
-            name: "Bahrain Grand Prix",
-            date: raceDate,
-            time: .init(hour: 15, minute: 0, second: 0),
-            wikipediaURL: URL(string: "https://en.wikipedia.org/wiki/2024_Bahrain_Grand_Prix"),
-            circuit: circuit
+            circuit: .fixture(id: .init(rawValue: "bahrain"))
         )
-        let secondRace = Race(
+        let secondRace = Race.fixture(
             seasonId: .init(rawValue: "2024"),
             round: .init(rawValue: "1"),
-            name: "Bahrain Grand Prix",
-            date: raceDate,
-            time: .init(hour: 15, minute: 0, second: 0),
-            wikipediaURL: URL(string: "https://en.wikipedia.org/wiki/2024_Bahrain_Grand_Prix"),
-            circuit: circuit
+            circuit: .fixture(id: .init(rawValue: "bahrain"))
         )
 
         // When
@@ -50,18 +29,18 @@ struct RaceTests {
     @Test("Race supports a missing start time")
     func raceSupportsMissingStartTime() {
         // Given
-        let race = Race(
+        let race = Race.fixture(
             seasonId: .init(rawValue: "2024"),
             round: .init(rawValue: "2"),
             name: "Saudi Arabian Grand Prix",
             date: Date(timeIntervalSince1970: 1_710_633_600),
             time: nil,
             wikipediaURL: nil,
-            circuit: Circuit(
+            circuit: .fixture(
                 id: .init(rawValue: "jeddah"),
                 name: "Jeddah Corniche Circuit",
                 wikipediaURL: nil,
-                location: Location(
+                location: .fixture(
                     latitude: 21.6319,
                     longitude: 39.1044,
                     locality: "Jeddah",
