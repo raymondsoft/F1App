@@ -32,7 +32,10 @@ let package = Package(
         ),
         .testTarget(
             name: "F1UITests",
-            dependencies: ["F1UI"]
+            dependencies: [
+                "F1UI",
+                .product(name: "F1Domain", package: "F1Domain")
+            ]
         ),
     ]
 )

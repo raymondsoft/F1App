@@ -37,7 +37,7 @@ public struct SeasonsScreen: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
         case .loaded(let seasons):
-            List(seasons, id: \.title) { season in
+            List(seasons, id: \.id) { season in
                 F1UI.Season.Row(season)
             }
 
@@ -67,14 +67,23 @@ public struct SeasonsScreen: View {
 
         do {
             let seasons = try await getSeasonsUseCase()
-            state = .loaded(seasons.map(Self.makeRowData))
+            state = Self.makeLoadedState(from: seasons)
         } catch {
-            state = .error(error.localizedDescription)
+            state = Self.makeErrorState(from: error)
         }
     }
 
-    private static func makeRowData(from season: Season) -> F1UI.Season.Row.ViewData {
+    static func makeLoadedState(from seasons: [Season]) -> ViewState {
+        .loaded(seasons.map(Self.makeRowData))
+    }
+
+    static func makeErrorState(from error: any Error) -> ViewState {
+        .error(error.localizedDescription)
+    }
+
+    static func makeRowData(from season: Season) -> F1UI.Season.Row.ViewData {
         .init(
+            id: season.id.rawValue,
             title: season.id.rawValue,
             showsWikipediaIndicator: season.wikipediaURL != nil
         )
@@ -82,7 +91,7 @@ public struct SeasonsScreen: View {
 }
 
 extension SeasonsScreen {
-    enum ViewState {
+    enum ViewState: Equatable {
         case idle
         case loading
         case loaded([F1UI.Season.Row.ViewData])
@@ -101,9 +110,9 @@ extension SeasonsScreen {
 #Preview("Loaded") {
     SeasonsScreen(
         previewState: .loaded([
-            .init(title: "2024", showsWikipediaIndicator: true),
-            .init(title: "2023", showsWikipediaIndicator: false),
-            .init(title: "2022", showsWikipediaIndicator: true)
+            .init(id: "2024", title: "2024", showsWikipediaIndicator: true),
+            .init(id: "2023", title: "2023", showsWikipediaIndicator: false),
+            .init(id: "2022", title: "2022", showsWikipediaIndicator: true)
         ])
     )
 }

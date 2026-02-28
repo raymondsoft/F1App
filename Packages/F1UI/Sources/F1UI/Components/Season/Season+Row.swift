@@ -3,10 +3,12 @@ import SwiftUI
 public extension F1UI.Season {
     struct Row: View {
         public struct ViewData: Hashable, Sendable {
+            public let id: String
             public let title: String
             public let showsWikipediaIndicator: Bool
 
-            public init(title: String, showsWikipediaIndicator: Bool) {
+            public init(id: String, title: String, showsWikipediaIndicator: Bool) {
+                self.id = id
                 self.title = title
                 self.showsWikipediaIndicator = showsWikipediaIndicator
             }
@@ -41,6 +43,7 @@ public extension F1UI.Season {
 #Preview("Season Row") {
     F1UI.Season.Row(
         .init(
+            id: "2024",
             title: "2024",
             showsWikipediaIndicator: true
         )
