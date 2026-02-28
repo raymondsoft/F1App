@@ -1,6 +1,6 @@
 import Foundation
 
-struct JolpicaEndpoint {
+struct JolpicaEndpoint: Sendable {
     let baseURL: URL
 
     init(baseURL: URL = URL(string: "https://api.jolpi.ca")!) {

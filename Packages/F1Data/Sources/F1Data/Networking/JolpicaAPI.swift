@@ -1,6 +1,6 @@
 import Foundation
 
-struct JolpicaAPI {
+struct JolpicaAPI: Sendable {
     private let endpoint: JolpicaEndpoint
     private let httpClient: HTTPClient
     private let decoder: JSONDecoder
