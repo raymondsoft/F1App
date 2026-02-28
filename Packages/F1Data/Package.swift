@@ -16,15 +16,24 @@ let package = Package(
             targets: ["F1Data"]
         ),
     ],
+    dependencies: [
+        .package(path: "../F1Domain")
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "F1Data"
+            name: "F1Data",
+            dependencies: [
+                .product(name: "F1Domain", package: "F1Domain")
+            ]
         ),
         .testTarget(
             name: "F1DataTests",
-            dependencies: ["F1Data"],
+            dependencies: [
+                "F1Data",
+                .product(name: "F1Domain", package: "F1Domain")
+            ],
             resources: [
                 .process("Helpers/Fixtures")
             ]
