@@ -31,8 +31,8 @@ struct SeasonsScreenTests {
         #expect(state == .loaded(expectedRows))
     }
 
-    @Test("Error state uses the localized error description")
-    func errorStateUsesLocalizedDescription() {
+    @Test("Error state uses a user-friendly retry message")
+    func errorStateUsesUserFriendlyMessage() {
         // Given
         let error = SeasonsScreenTestError()
 
@@ -40,7 +40,7 @@ struct SeasonsScreenTests {
         let state = SeasonsScreen.makeErrorState(from: error)
 
         // Then
-        #expect(state == .error("The seasons request failed."))
+        #expect(state == .error("Failed to load seasons. Please try again."))
     }
 }
 

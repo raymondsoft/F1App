@@ -5,15 +5,15 @@ import SwiftUI
 public struct SeasonsScreen: View {
     @State private var state: ViewState
 
-    private let getSeasonsUseCase: GetSeasonsUseCase?
+    private let getSeasons: @Sendable () async throws -> [Season]
 
     public init(getSeasonsUseCase: GetSeasonsUseCase) {
-        self.getSeasonsUseCase = getSeasonsUseCase
+        self.getSeasons = { try await getSeasonsUseCase() }
         self._state = SwiftUI.State(initialValue: .idle)
     }
 
     init(previewState state: ViewState) {
-        self.getSeasonsUseCase = nil
+        self.getSeasons = { [] }
         self._state = SwiftUI.State(initialValue: state)
     }
 
@@ -59,14 +59,10 @@ public struct SeasonsScreen: View {
 
     @MainActor
     private func loadSeasons() async {
-        guard let getSeasonsUseCase else {
-            return
-        }
-
         state = .loading
 
         do {
-            let seasons = try await getSeasonsUseCase()
+            let seasons = try await getSeasons()
             state = Self.makeLoadedState(from: seasons)
         } catch {
             state = Self.makeErrorState(from: error)
@@ -78,7 +74,7 @@ public struct SeasonsScreen: View {
     }
 
     static func makeErrorState(from error: any Error) -> ViewState {
-        .error(error.localizedDescription)
+        .error("Failed to load seasons. Please try again.")
     }
 
     static func makeRowData(from season: Season) -> F1UI.Season.Row.ViewData {
