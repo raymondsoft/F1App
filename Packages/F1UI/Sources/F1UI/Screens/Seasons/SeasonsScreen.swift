@@ -6,14 +6,22 @@ public struct SeasonsScreen: View {
     @State private var state: ViewState
 
     private let getSeasons: @Sendable () async throws -> [Season]
+    private let getRaces: @Sendable (String) async throws -> [Race]
 
-    public init(getSeasonsUseCase: GetSeasonsUseCase) {
+    public init(
+        getSeasonsUseCase: GetSeasonsUseCase,
+        getRacesForSeasonUseCase: GetRacesForSeasonUseCase
+    ) {
         self.getSeasons = { try await getSeasonsUseCase() }
+        self.getRaces = { seasonId in
+            try await getRacesForSeasonUseCase(seasonId: Season.ID(rawValue: seasonId))
+        }
         self._state = SwiftUI.State(initialValue: .idle)
     }
 
     init(previewState state: ViewState) {
         self.getSeasons = { [] }
+        self.getRaces = { _ in [] }
         self._state = SwiftUI.State(initialValue: state)
     }
 
@@ -38,7 +46,11 @@ public struct SeasonsScreen: View {
 
         case .loaded(let seasons):
             List(seasons, id: \.id) { season in
-                F1UI.Season.Row(season)
+                NavigationLink {
+                    RacesScreen(seasonId: season.id, getRaces: getRaces)
+                } label: {
+                    F1UI.Season.Row(season)
+                }
             }
 
         case .error(let message):
