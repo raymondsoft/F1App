@@ -121,12 +121,33 @@ public struct RacesScreen: View {
             return nil
         }
 
-        return String(
+        let baseTime = String(
             format: "%02d:%02d:%02d",
             locale: Locale(identifier: "en_US_POSIX"),
             time.hour,
             time.minute,
             time.second
+        )
+
+        guard time.utcOffsetSeconds != 0 else {
+            return baseTime
+        }
+
+        return "\(baseTime) \(makeUTCOffsetText(from: time.utcOffsetSeconds))"
+    }
+
+    private static func makeUTCOffsetText(from utcOffsetSeconds: Int) -> String {
+        let sign = utcOffsetSeconds >= 0 ? "+" : "-"
+        let absoluteSeconds = abs(utcOffsetSeconds)
+        let hours = absoluteSeconds / 3600
+        let minutes = (absoluteSeconds % 3600) / 60
+
+        return String(
+            format: "UTC%@%02d:%02d",
+            locale: Locale(identifier: "en_US_POSIX"),
+            sign,
+            hours,
+            minutes
         )
     }
 }
