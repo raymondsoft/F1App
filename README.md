@@ -11,7 +11,7 @@ The repository is structured around Clean Architecture boundaries.
 - `F1Domain` is the core domain layer. It defines stable business entities and repository contracts.
 - `F1Data` is the data layer. It talks to the external Jolpica API, decodes transport models, validates and maps them into domain entities, and provides a concrete repository implementation.
 - `F1UseCases` is the package reserved for application-specific orchestration. It exists, but is currently only a placeholder target.
-- `F1UI` is the package reserved for presentation code. It also exists as a placeholder target.
+- `F1UI` is the package reserved for presentation code. Its UI architecture is documented around namespaced components, nested SwiftUI views, screen-driven mapping, and strict separation between reusable components and screens. The package target itself is still a placeholder.
 - `F1App` is the app composition layer. At the moment it still contains the default SwiftUI and SwiftData template code rather than F1-specific wiring.
 
 The implemented architecture already follows several important rules:
@@ -42,6 +42,24 @@ Dependency flow is intentionally constrained.
 Today, the only implemented package dependency is:
 
 `F1Data -> F1Domain`
+
+The documented UI dependency direction is:
+
+- `F1UI` may depend on `F1UseCases`
+- `F1UI` may depend on `F1Domain` for identifiers or read-only domain types when needed
+- `F1UI` must not depend on `F1Data` implementation details
+- `F1App` is responsible for wiring repositories, use cases, and UI together
+
+## UI architecture
+
+The official UI approach is documented in `Packages/F1UI/README.md`.
+
+At a high level:
+
+- reusable UI elements live under the `F1UI` namespace using nested Swift types such as `F1UI.Race.Row`
+- screens own loading, error handling, navigation, and Domain-to-UI mapping
+- small components remain pure rendering units that receive prepared UI data
+- the UI layer does not construct repositories or access networking directly
 
 ## Build and test
 
@@ -127,7 +145,7 @@ Implemented:
 Declared but not yet implemented beyond placeholders:
 
 - `F1UseCases`
-- `F1UI`
+- `F1UI` package code, although its target architecture is now documented
 
 Not yet integrated into the F1 architecture:
 
