@@ -320,6 +320,53 @@ Explicit construction is always acceptable.
 
 ---
 
+# UI Test Structure
+
+UI tests must mirror the responsibility boundaries of the `F1UI` package.
+
+Inside `Tests/F1UITests/`, organize files as:
+
+```text
+Tests/F1UITests/
+    Components/
+        SeasonRowTests.swift
+        CircuitRowTests.swift
+        RaceRowTests.swift
+    Screens/
+        SeasonsScreenTests.swift
+        RacesScreenTests.swift
+    Helpers/
+```
+
+## File structure rules
+
+- Use one test suite per file.
+- Give each reusable UI component its own dedicated test file.
+- Give each screen its own dedicated test file.
+- Do not mix multiple components in one test file.
+- Do not mix component and screen tests in one test file.
+- Do not create large monolithic UI test files.
+- Put shared test helpers only in `Tests/F1UITests/Helpers/`.
+- Keep test folders aligned with UI responsibility boundaries.
+
+## File naming rules
+
+- Match the file name to the tested type.
+- Remove `+` from filenames when deriving the test filename.
+- Use `SeasonRowTests.swift` for `F1UI.Season.Row`.
+- Use `SeasonsScreenTests.swift` for `SeasonsScreen`.
+- Avoid generic names such as `UITests.swift`.
+
+## Why this structure is required
+
+- It improves readability by keeping each suite focused on one UI type.
+- It improves discoverability by making the test location predictable from the type name.
+- It improves AI agent consistency by removing ambiguity about where tests belong.
+- It mirrors Clean Architecture boundaries already used in production UI code.
+- It prevents test file bloat as the number of components and screens grows.
+
+---
+
 # Test helpers
 
 Two types of helpers exist.

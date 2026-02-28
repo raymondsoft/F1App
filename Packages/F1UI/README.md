@@ -214,6 +214,18 @@ Directory purpose:
 
 This structure is intentionally split by responsibility so reusable views do not drift into screen logic and screen logic does not leak into the component layer.
 
+## Test structure
+
+`F1UI` tests follow the same responsibility split as production code.
+
+- component tests live in `Tests/F1UITests/Components/`
+- screen tests live in `Tests/F1UITests/Screens/`
+- shared helpers live only in `Tests/F1UITests/Helpers/`
+
+Use one dedicated test file per tested type and match the file name to that type, for example `SeasonRowTests.swift` for `F1UI.Season.Row` and `SeasonsScreenTests.swift` for `SeasonsScreen`.
+
+The full rule is defined in `docs/testing.md` under `UI Test Structure`.
+
 ## App composition responsibility
 
 `F1App` is the composition root.
