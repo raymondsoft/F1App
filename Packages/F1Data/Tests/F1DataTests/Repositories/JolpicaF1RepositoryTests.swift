@@ -72,6 +72,30 @@ struct JolpicaF1RepositoryTests {
         }
     }
 
+    @Test("JolpicaF1Repository should propagate decoding errors")
+    func testPropagatesDecodingErrors() async {
+        // Given
+        let seasonsURL = URL(string: "https://api.jolpi.ca/api/f1/seasons.json")!
+        let invalidJSONData = Data("not-json".utf8)
+        let httpClientStub = HTTPClientStub(
+            responses: [
+                seasonsURL: .success(invalidJSONData)
+            ]
+        )
+        let sut = JolpicaF1Repository(httpClient: httpClientStub)
+
+        // When
+        do {
+            _ = try await sut.seasons()
+            Issue.record("Expected DecodingError to be thrown")
+        } catch is DecodingError {
+            // Then
+            #expect(Bool(true))
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
+        }
+    }
+
     @Test("JolpicaF1Repository should throw mapping error for invalid race coordinates")
     func testThrowsMappingError() async {
         // Given

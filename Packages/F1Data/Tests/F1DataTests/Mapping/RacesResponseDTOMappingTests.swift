@@ -51,7 +51,57 @@ struct RacesResponseDTOMappingTests {
         #expect(races[0].time == Race.Time(hour: 15, minute: 0, second: 0, utcOffsetSeconds: 7200))
     }
 
-    private func makeRacesResponseDTO(time: String?) -> RacesResponseDTO {
+    @Test("RacesResponseDTO should throw mapping error for invalid date")
+    func testMappingInvalidDateThrows() {
+        // Given
+        let response = makeRacesResponseDTO(date: "2023-02-30")
+
+        // When
+        do {
+            _ = try response.toDomain()
+            Issue.record("Expected DataError.mapping to be thrown")
+        } catch let error as DataError {
+            // Then
+            #expect(error == .mapping(underlying: "Invalid date: 2023-02-30"))
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
+        }
+    }
+
+    @Test("RacesResponseDTO should throw mapping error for invalid time")
+    func testMappingInvalidTimeThrows() {
+        // Given
+        let response = makeRacesResponseDTO(time: "25:99:99+02:00")
+
+        // When
+        do {
+            _ = try response.toDomain()
+            Issue.record("Expected DataError.mapping to be thrown")
+        } catch let error as DataError {
+            // Then
+            #expect(error == .mapping(underlying: "Invalid time: 25:99:99+02:00"))
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
+        }
+    }
+
+    @Test("RacesResponseDTO should map invalid circuit URL strings to nil")
+    func testMappingInvalidCircuitURLToNil() throws {
+        // Given
+        let response = makeRacesResponseDTO(circuitURL: "https://exa mple.com")
+
+        // When
+        let races = try response.toDomain()
+
+        // Then
+        #expect(races[0].circuit.wikipediaURL == nil)
+    }
+
+    private func makeRacesResponseDTO(
+        date: String = "2023-03-05",
+        time: String? = "15:00:00Z",
+        circuitURL: String = "https://en.wikipedia.org/wiki/Bahrain_International_Circuit"
+    ) -> RacesResponseDTO {
         RacesResponseDTO(
             mrData: .init(
                 raceTable: .init(
@@ -64,7 +114,7 @@ struct RacesResponseDTOMappingTests {
                             raceName: "Bahrain Grand Prix",
                             circuit: .init(
                                 circuitId: "bahrain",
-                                url: "https://en.wikipedia.org/wiki/Bahrain_International_Circuit",
+                                url: circuitURL,
                                 circuitName: "Bahrain International Circuit",
                                 location: .init(
                                     latitude: "26.0325",
@@ -73,7 +123,7 @@ struct RacesResponseDTOMappingTests {
                                     country: "Bahrain"
                                 )
                             ),
-                            date: "2023-03-05",
+                            date: date,
                             time: time
                         )
                     ]

@@ -46,6 +46,7 @@ extension RacesResponseDTO {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd"
+        formatter.isLenient = false
 
         guard let date = formatter.date(from: value) else {
             throw DataError.mapping(underlying: "Invalid date: \(value)")
@@ -70,7 +71,10 @@ extension RacesResponseDTO {
             components.count == 3,
             let hour = Int(components[0]),
             let minute = Int(components[1]),
-            let second = Int(components[2])
+            let second = Int(components[2]),
+            (0...23).contains(hour),
+            (0...59).contains(minute),
+            (0...59).contains(second)
         else {
             throw DataError.mapping(underlying: "Invalid time: \(value)")
         }
@@ -104,7 +108,9 @@ extension RacesResponseDTO {
         guard
             parts.count == 2,
             let hours = Int(parts[0]),
-            let minutes = Int(parts[1])
+            let minutes = Int(parts[1]),
+            (0...23).contains(hours),
+            (0...59).contains(minutes)
         else {
             throw DataError.mapping(underlying: "Invalid time: \(originalValue)")
         }
