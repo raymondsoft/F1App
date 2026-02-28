@@ -1,6 +1,6 @@
 import F1Domain
 
-actor F1RepositorySpy: F1Repository {
+actor F1RepositoryMock: F1Repository {
     private(set) var seasonsCallCount = 0
     private(set) var racesCallCount = 0
     private(set) var receivedSeasonId: Season.ID?

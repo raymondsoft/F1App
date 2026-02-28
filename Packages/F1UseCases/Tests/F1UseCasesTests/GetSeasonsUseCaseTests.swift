@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct GetSeasonsUseCaseTests {
     @Test("GetSeasonsUseCase calls seasons once and returns repository seasons")
-    func execute_callsRepositorySeasonsOnce_andReturnsSeasons() async throws {
+    func callAsFunction_callsRepositorySeasonsOnce_andReturnsSeasons() async throws {
         // Given
         let expectedSeasons = [
             Season(
@@ -18,11 +18,11 @@ struct GetSeasonsUseCaseTests {
                 wikipediaURL: URL(string: "https://en.wikipedia.org/wiki/2025_Formula_One_World_Championship")
             )
         ]
-        let repository = F1RepositorySpy(seasonsResult: .success(expectedSeasons))
+        let repository = F1RepositoryMock(seasonsResult: .success(expectedSeasons))
         let sut = GetSeasonsUseCase(repository: repository)
 
         // When
-        let seasons = try await sut.execute()
+        let seasons = try await sut()
 
         // Then
         #expect(seasons == expectedSeasons)
@@ -30,15 +30,15 @@ struct GetSeasonsUseCaseTests {
     }
 
     @Test("GetSeasonsUseCase propagates repository errors")
-    func execute_whenRepositoryFails_throwsRepositoryError() async throws {
+    func callAsFunction_whenRepositoryFails_throwsRepositoryError() async throws {
         // Given
         let expectedError = RepositoryError.sample
-        let repository = F1RepositorySpy(seasonsResult: .failure(expectedError))
+        let repository = F1RepositoryMock(seasonsResult: .failure(expectedError))
         let sut = GetSeasonsUseCase(repository: repository)
 
         // When
         let thrownError = await #expect(throws: RepositoryError.self) {
-            try await sut.execute()
+            try await sut()
         }
 
         // Then

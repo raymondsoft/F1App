@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct GetRacesForSeasonUseCaseTests {
     @Test("GetRacesForSeasonUseCase calls races with season id and returns repository races")
-    func execute_callsRepositoryRacesWithSeasonId_andReturnsRaces() async throws {
+    func callAsFunction_callsRepositoryRacesWithSeasonId_andReturnsRaces() async throws {
         // Given
         let expectedSeasonId = Season.ID(rawValue: "2024")
         let expectedRaces = [
@@ -30,11 +30,11 @@ struct GetRacesForSeasonUseCaseTests {
                 )
             )
         ]
-        let repository = F1RepositorySpy(racesResult: .success(expectedRaces))
+        let repository = F1RepositoryMock(racesResult: .success(expectedRaces))
         let sut = GetRacesForSeasonUseCase(repository: repository)
 
         // When
-        let races = try await sut.execute(seasonId: expectedSeasonId)
+        let races = try await sut(seasonId: expectedSeasonId)
 
         // Then
         #expect(races == expectedRaces)
@@ -43,15 +43,15 @@ struct GetRacesForSeasonUseCaseTests {
     }
 
     @Test("GetRacesForSeasonUseCase propagates repository errors")
-    func execute_whenRepositoryFails_throwsRepositoryError() async throws {
+    func callAsFunction_whenRepositoryFails_throwsRepositoryError() async throws {
         // Given
         let expectedError = RepositoryError.sample
-        let repository = F1RepositorySpy(racesResult: .failure(expectedError))
+        let repository = F1RepositoryMock(racesResult: .failure(expectedError))
         let sut = GetRacesForSeasonUseCase(repository: repository)
 
         // When
         let thrownError = await #expect(throws: RepositoryError.self) {
-            try await sut.execute(seasonId: Season.ID(rawValue: "2024"))
+            try await sut(seasonId: Season.ID(rawValue: "2024"))
         }
 
         // Then
