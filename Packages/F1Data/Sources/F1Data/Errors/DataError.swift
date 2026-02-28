@@ -5,4 +5,5 @@ public enum DataError: Error, Equatable {
     case network(underlying: String)
     case invalidResponse(statusCode: Int)
     case emptyData
+    case mapping(underlying: String)
 }
