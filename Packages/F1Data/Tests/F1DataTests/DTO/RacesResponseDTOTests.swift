@@ -58,4 +58,18 @@ struct RacesResponseDTOTests {
         #expect(firstRace.circuit.location.locality == expectedLocality)
         #expect(firstRace.circuit.location.country == expectedCountry)
     }
+
+    @Test("Decoded races pagination fields match fixture")
+    func testPaginationFields() throws {
+        // Given
+        let data = try loadJSONFixture(named: "races_2023")
+
+        // When
+        let response = try decoder.decode(RacesResponseDTO.self, from: data)
+
+        // Then
+        #expect(response.mrData.total == "22")
+        #expect(response.mrData.limit == "30")
+        #expect(response.mrData.offset == "0")
+    }
 }

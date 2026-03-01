@@ -8,7 +8,7 @@ struct JolpicaF1RepositoryTests {
     @Test("JolpicaF1Repository should return domain seasons from seasons fixture")
     func testSeasonsReturnsDomainSeasons() async throws {
         // Given
-        let seasonsURL = URL(string: "https://api.jolpi.ca/api/f1/seasons.json")!
+        let seasonsURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!
         let seasonsData = try loadJSONFixture(named: "seasons")
         let httpClientStub = HTTPClientStub(
             responses: [
@@ -29,7 +29,7 @@ struct JolpicaF1RepositoryTests {
     @Test("JolpicaF1Repository should return domain races from races fixture")
     func testRacesReturnsDomainRaces() async throws {
         // Given
-        let racesURL = URL(string: "https://api.jolpi.ca/api/f1/2023/races.json")!
+        let racesURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json")!
         let racesData = try loadJSONFixture(named: "races_2023")
         let httpClientStub = HTTPClientStub(
             responses: [
@@ -51,7 +51,7 @@ struct JolpicaF1RepositoryTests {
     @Test("JolpicaF1Repository should propagate HTTPClient errors")
     func testPropagatesHTTPClientErrors() async {
         // Given
-        let seasonsURL = URL(string: "https://api.jolpi.ca/api/f1/seasons.json")!
+        let seasonsURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!
         let expectedError = DataError.network(underlying: "request failed")
         let httpClientStub = HTTPClientStub(
             responses: [
@@ -75,7 +75,7 @@ struct JolpicaF1RepositoryTests {
     @Test("JolpicaF1Repository should propagate decoding errors")
     func testPropagatesDecodingErrors() async {
         // Given
-        let seasonsURL = URL(string: "https://api.jolpi.ca/api/f1/seasons.json")!
+        let seasonsURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!
         let invalidJSONData = Data("not-json".utf8)
         let httpClientStub = HTTPClientStub(
             responses: [
@@ -99,7 +99,7 @@ struct JolpicaF1RepositoryTests {
     @Test("JolpicaF1Repository should throw mapping error for invalid race coordinates")
     func testThrowsMappingError() async {
         // Given
-        let racesURL = URL(string: "https://api.jolpi.ca/api/f1/2023/races.json")!
+        let racesURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json")!
         let invalidRacesData = Data(
             """
             {
@@ -149,5 +149,107 @@ struct JolpicaF1RepositoryTests {
         } catch {
             Issue.record("Unexpected error type: \(error)")
         }
+    }
+
+    @Test("JolpicaF1Repository should request paged seasons with limit and offset query parameters")
+    func testSeasonsPageRequestsExpectedURL() async throws {
+        // Given
+        let seasonsData = try loadJSONFixture(named: "seasons")
+        let httpClientMock = HTTPClientMock(result: .success(seasonsData))
+        let sut = JolpicaF1Repository(httpClient: httpClientMock)
+        let request = try PageRequest(limit: 20, offset: 40)
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json?limit=20&offset=40")!
+
+        // When
+        _ = try await sut.seasonsPage(request: request)
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [expectedURL])
+    }
+
+    @Test("JolpicaF1Repository should request paged races with limit and offset query parameters")
+    func testRacesPageRequestsExpectedURL() async throws {
+        // Given
+        let racesData = try loadJSONFixture(named: "races_2023")
+        let httpClientMock = HTTPClientMock(result: .success(racesData))
+        let sut = JolpicaF1Repository(httpClient: httpClientMock)
+        let request = try PageRequest(limit: 20, offset: 40)
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json?limit=20&offset=40")!
+
+        // When
+        _ = try await sut.racesPage(
+            seasonId: Season.ID(rawValue: "2023"),
+            request: request
+        )
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [expectedURL])
+    }
+
+    @Test("JolpicaF1Repository should map total and hasMore for paged seasons")
+    func testSeasonsPageMapsTotalAndHasMore() async throws {
+        // Given
+        let seasonsURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json?limit=3&offset=0")!
+        let seasonsData = try loadJSONFixture(named: "seasons")
+        let httpClientStub = HTTPClientStub(
+            responses: [
+                seasonsURL: .success(seasonsData)
+            ]
+        )
+        let sut = JolpicaF1Repository(httpClient: httpClientStub)
+        let request = try PageRequest(limit: 3, offset: 0)
+
+        // When
+        let page = try await sut.seasonsPage(request: request)
+
+        // Then
+        #expect(page.total == 10)
+        #expect(page.limit == 3)
+        #expect(page.offset == 0)
+        #expect(page.hasMore == true)
+    }
+
+    @Test("JolpicaF1Repository should fallback hasMore to returned count when total is missing")
+    func testSeasonsPageFallsBackWhenTotalMissing() async throws {
+        // Given
+        let seasonsURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json?limit=2&offset=0")!
+        let seasonsDataWithoutTotal = Data(
+            """
+            {
+              "MRData": {
+                "limit": "2",
+                "offset": "0",
+                "SeasonTable": {
+                  "Seasons": [
+                    {
+                      "season": "2023",
+                      "url": "https://en.wikipedia.org/wiki/2023_Formula_One_World_Championship"
+                    },
+                    {
+                      "season": "2022",
+                      "url": "https://en.wikipedia.org/wiki/2022_Formula_One_World_Championship"
+                    }
+                  ]
+                }
+              }
+            }
+            """.utf8
+        )
+        let httpClientStub = HTTPClientStub(
+            responses: [
+                seasonsURL: .success(seasonsDataWithoutTotal)
+            ]
+        )
+        let sut = JolpicaF1Repository(httpClient: httpClientStub)
+        let request = try PageRequest(limit: 2, offset: 0)
+
+        // When
+        let page = try await sut.seasonsPage(request: request)
+
+        // Then
+        #expect(page.total == nil)
+        #expect(page.limit == 2)
+        #expect(page.offset == 0)
+        #expect(page.hasMore == true)
     }
 }

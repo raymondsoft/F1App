@@ -51,6 +51,26 @@ struct RacesResponseDTOMappingTests {
         #expect(races[0].time == Race.Time(hour: 15, minute: 0, second: 0, utcOffsetSeconds: 7200))
     }
 
+    @Test("RacesResponseDTO should decode and map pagination metadata")
+    func testMappingPaginationMetadata() throws {
+        // Given
+        let data = try loadJSONFixture(named: "races_2023")
+        let decoder = JSONDecoder()
+        let response = try decoder.decode(RacesResponseDTO.self, from: data)
+
+        // When
+        let page = try response.toPage()
+
+        // Then
+        #expect(response.mrData.total == "22")
+        #expect(response.mrData.limit == "30")
+        #expect(response.mrData.offset == "0")
+        #expect(page.total == 22)
+        #expect(page.limit == 30)
+        #expect(page.offset == 0)
+        #expect(page.hasMore == true)
+    }
+
     @Test("RacesResponseDTO should throw mapping error for invalid date")
     func testMappingInvalidDateThrows() {
         // Given
@@ -104,6 +124,9 @@ struct RacesResponseDTOMappingTests {
     ) -> RacesResponseDTO {
         RacesResponseDTO(
             mrData: .init(
+                limit: "30",
+                offset: "0",
+                total: "22",
                 raceTable: .init(
                     season: "2023",
                     races: [

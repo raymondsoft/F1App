@@ -47,6 +47,20 @@ struct SeasonsResponseDTOTests {
         #expect(first.url == expectedURL)
     }
 
+    @Test("Decoded seasons pagination fields match fixture")
+    func testPaginationFields() throws {
+        // Given
+        let data = try loadJSONFixture(named: "seasons")
+
+        // When
+        let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
+
+        // Then
+        #expect(response.mrData.total == "10")
+        #expect(response.mrData.limit == "3")
+        #expect(response.mrData.offset == "0")
+    }
+
     private func decodeSeasonsFixture() throws -> SeasonsResponseDTO {
         let data = try loadJSONFixture(named: "seasons")
         return try decoder.decode(SeasonsResponseDTO.self, from: data)

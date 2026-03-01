@@ -10,7 +10,7 @@ struct JolpicaAPITests {
         let seasonsData = try loadJSONFixture(named: "seasons")
         let httpClientMock = HTTPClientMock(result: .success(seasonsData))
         let sut = JolpicaAPI(httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://api.jolpi.ca/api/f1/seasons.json")!
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!
 
         // When
         _ = try await sut.seasons()
@@ -25,7 +25,7 @@ struct JolpicaAPITests {
         let racesData = try loadJSONFixture(named: "races_2023")
         let httpClientMock = HTTPClientMock(result: .success(racesData))
         let sut = JolpicaAPI(httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://api.jolpi.ca/api/f1/2023/races.json")!
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json")!
 
         // When
         _ = try await sut.races(season: "2023")
@@ -40,10 +40,40 @@ struct JolpicaAPITests {
         let seasonsData = try loadJSONFixture(named: "seasons")
         let httpClientMock = HTTPClientMock(result: .success(seasonsData))
         let sut = JolpicaAPI(baseURL: URL(string: "https://example.com/proxy")!, httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://example.com/proxy/api/f1/seasons.json")!
+        let expectedURL = URL(string: "https://example.com/proxy/ergast/f1/seasons.json")!
 
         // When
         _ = try await sut.seasons()
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [expectedURL])
+    }
+
+    @Test("Paged seasons should call HTTPClient with limit and offset query parameters")
+    func testPagedSeasonsCallsExpectedURL() async throws {
+        // Given
+        let seasonsData = try loadJSONFixture(named: "seasons")
+        let httpClientMock = HTTPClientMock(result: .success(seasonsData))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json?limit=20&offset=40")!
+
+        // When
+        _ = try await sut.seasons(limit: 20, offset: 40)
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [expectedURL])
+    }
+
+    @Test("Paged races should call HTTPClient with limit and offset query parameters")
+    func testPagedRacesCallsExpectedURL() async throws {
+        // Given
+        let racesData = try loadJSONFixture(named: "races_2023")
+        let httpClientMock = HTTPClientMock(result: .success(racesData))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json?limit=20&offset=40")!
+
+        // When
+        _ = try await sut.races(season: "2023", limit: 20, offset: 40)
 
         // Then
         #expect(httpClientMock.requestedURLs == [expectedURL])

@@ -8,7 +8,7 @@ struct JolpicaEndpointTests {
     func testSeasonsURLWithDefaultBase() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/api/f1/seasons.json")!
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!
 
         // When
         let url = sut.seasonsURL()
@@ -21,7 +21,7 @@ struct JolpicaEndpointTests {
     func testRacesURLForSeason() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/api/f1/2023/races.json")!
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json")!
 
         // When
         let url = sut.racesURL(season: "2023")
@@ -34,8 +34,8 @@ struct JolpicaEndpointTests {
     func testEndpointsWithCustomBaseURL() {
         // Given
         let sut = JolpicaEndpoint(baseURL: URL(string: "https://example.com")!)
-        let expectedSeasonsURL = URL(string: "https://example.com/api/f1/seasons.json")!
-        let expectedRacesURL = URL(string: "https://example.com/api/f1/2024/races.json")!
+        let expectedSeasonsURL = URL(string: "https://example.com/ergast/f1/seasons.json")!
+        let expectedRacesURL = URL(string: "https://example.com/ergast/f1/2024/races.json")!
 
         // When
         let seasonsURL = sut.seasonsURL()
@@ -50,8 +50,8 @@ struct JolpicaEndpointTests {
     func testEndpointsWithCustomBaseURLContainingPath() {
         // Given
         let sut = JolpicaEndpoint(baseURL: URL(string: "https://example.com/proxy/v1")!)
-        let expectedSeasonsURL = URL(string: "https://example.com/proxy/v1/api/f1/seasons.json")!
-        let expectedRacesURL = URL(string: "https://example.com/proxy/v1/api/f1/2024/races.json")!
+        let expectedSeasonsURL = URL(string: "https://example.com/proxy/v1/ergast/f1/seasons.json")!
+        let expectedRacesURL = URL(string: "https://example.com/proxy/v1/ergast/f1/2024/races.json")!
 
         // When
         let seasonsURL = sut.seasonsURL()
@@ -66,10 +66,36 @@ struct JolpicaEndpointTests {
     func testRacesURLWithNonNumericSeason() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/api/f1/current/races.json")!
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/current/races.json")!
 
         // When
         let url = sut.racesURL(season: "current")
+
+        // Then
+        #expect(url == expectedURL)
+    }
+
+    @Test("Paged seasons endpoint should include limit and offset query parameters")
+    func testPagedSeasonsURL() {
+        // Given
+        let sut = JolpicaEndpoint()
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json?limit=20&offset=40")!
+
+        // When
+        let url = sut.seasonsURL(limit: 20, offset: 40)
+
+        // Then
+        #expect(url == expectedURL)
+    }
+
+    @Test("Paged races endpoint should include limit and offset query parameters")
+    func testPagedRacesURL() {
+        // Given
+        let sut = JolpicaEndpoint()
+        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json?limit=20&offset=40")!
+
+        // When
+        let url = sut.racesURL(season: "2023", limit: 20, offset: 40)
 
         // Then
         #expect(url == expectedURL)
