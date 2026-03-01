@@ -17,7 +17,21 @@ public struct Page<Element>: Sendable where Element: Sendable {
         total: Int?,
         limit: Int,
         offset: Int
-    ) {
+    ) throws {
+        guard limit > 0 else {
+            throw PaginationError.invalidLimit
+        }
+
+        guard offset >= 0 else {
+            throw PaginationError.invalidOffset
+        }
+
+        if let total {
+            guard total >= 0 else {
+                throw PaginationError.invalidTotal
+            }
+        }
+
         self.items = items
         self.total = total
         self.limit = limit
