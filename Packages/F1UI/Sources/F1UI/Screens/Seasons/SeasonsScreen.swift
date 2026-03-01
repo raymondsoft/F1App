@@ -308,7 +308,7 @@ extension SeasonsScreen {
     SeasonsScreen(previewState: SeasonsScreen.makeInitialErrorState())
 }
 
-#Preview("Loaded") {
+#Preview("Loaded First Page") {
     SeasonsScreen(
         previewState: .init(
             items: [
@@ -320,6 +320,23 @@ extension SeasonsScreen {
             isLoadingMore: false,
             hasMore: false,
             nextOffset: 3,
+            error: nil
+        )
+    )
+}
+
+#Preview("Loaded With More") {
+    SeasonsScreen(
+        previewState: .init(
+            items: [
+                .init(id: "2024", title: "2024", showsWikipediaIndicator: true),
+                .init(id: "2023", title: "2023", showsWikipediaIndicator: false),
+                .init(id: "2022", title: "2022", showsWikipediaIndicator: true)
+            ],
+            isLoadingInitial: false,
+            isLoadingMore: false,
+            hasMore: true,
+            nextOffset: 30,
             error: nil
         )
     )
