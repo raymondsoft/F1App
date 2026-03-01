@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B6C6A0012F52300100688BA3 /* F1Data in Frameworks */ = {isa = PBXBuildFile; productRef = B6C6A0052F52300100688BA3 /* F1Data */; };
+		B6C6A0022F52300100688BA3 /* F1UseCases in Frameworks */ = {isa = PBXBuildFile; productRef = B6C6A0062F52300100688BA3 /* F1UseCases */; };
+		B6C6A0032F52300100688BA3 /* F1UI in Frameworks */ = {isa = PBXBuildFile; productRef = B6C6A0072F52300100688BA3 /* F1UI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B644BB3E2F45AAA600688BA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6C6A0012F52300100688BA3 /* F1Data in Frameworks */,
+				B6C6A0022F52300100688BA3 /* F1UseCases in Frameworks */,
+				B6C6A0032F52300100688BA3 /* F1UI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +121,9 @@
 			);
 			name = F1App;
 			packageProductDependencies = (
+				B6C6A0052F52300100688BA3 /* F1Data */,
+				B6C6A0062F52300100688BA3 /* F1UseCases */,
+				B6C6A0072F52300100688BA3 /* F1UI */,
 			);
 			productName = F1App;
 			productReference = B644BB2E2F45AAA500688BA3 /* F1App.app */;
@@ -195,6 +207,11 @@
 			);
 			mainGroup = B644BB252F45AAA500688BA3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B6C6A0082F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1Data" */,
+				B6C6A0092F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UseCases" */,
+				B6C6A00A2F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B644BB2F2F45AAA500688BA3 /* Products */;
 			projectDirPath = "";
@@ -267,6 +284,39 @@
 			targetProxy = B644BB482F45AAA600688BA3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B6C6A0082F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1Data" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/F1Data;
+		};
+		B6C6A0092F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UseCases" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/F1UseCases;
+		};
+		B6C6A00A2F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/F1UI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B6C6A0052F52300100688BA3 /* F1Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C6A0082F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1Data" */;
+			productName = F1Data;
+		};
+		B6C6A0062F52300100688BA3 /* F1UseCases */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C6A0092F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UseCases" */;
+			productName = F1UseCases;
+		};
+		B6C6A0072F52300100688BA3 /* F1UI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C6A00A2F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UI" */;
+			productName = F1UI;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B644BB4F2F45AAA600688BA3 /* Debug */ = {
