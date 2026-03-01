@@ -285,39 +285,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		B6C6A0082F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1Data" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/F1Data;
-		};
-		B6C6A0092F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UseCases" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/F1UseCases;
-		};
-		B6C6A00A2F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UI" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/F1UI;
-		};
-/* End XCLocalSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		B6C6A0052F52300100688BA3 /* F1Data */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B6C6A0082F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1Data" */;
-			productName = F1Data;
-		};
-		B6C6A0062F52300100688BA3 /* F1UseCases */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B6C6A0092F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UseCases" */;
-			productName = F1UseCases;
-		};
-		B6C6A0072F52300100688BA3 /* F1UI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B6C6A00A2F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UI" */;
-			productName = F1UI;
-		};
-/* End XCSwiftPackageProductDependency section */
-
 /* Begin XCBuildConfiguration section */
 		B644BB4F2F45AAA600688BA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -445,7 +412,17 @@
 				DEVELOPMENT_TEAM = 6ABN2XSLTF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -489,7 +466,17 @@
 				DEVELOPMENT_TEAM = 6ABN2XSLTF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -665,6 +652,39 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B6C6A0082F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1Data" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/F1Data;
+		};
+		B6C6A0092F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UseCases" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/F1UseCases;
+		};
+		B6C6A00A2F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/F1UI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B6C6A0052F52300100688BA3 /* F1Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C6A0082F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1Data" */;
+			productName = F1Data;
+		};
+		B6C6A0062F52300100688BA3 /* F1UseCases */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C6A0092F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UseCases" */;
+			productName = F1UseCases;
+		};
+		B6C6A0072F52300100688BA3 /* F1UI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C6A00A2F52300100688BA3 /* XCLocalSwiftPackageReference "Packages/F1UI" */;
+			productName = F1UI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B644BB262F45AAA500688BA3 /* Project object */;
 }

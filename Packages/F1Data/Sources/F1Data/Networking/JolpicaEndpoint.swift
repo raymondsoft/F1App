@@ -9,14 +9,14 @@ struct JolpicaEndpoint: Sendable {
 
     func seasonsURL() -> URL {
         baseURL
-            .appendingPathComponent("api")
+            .appendingPathComponent("ergast")
             .appendingPathComponent("f1")
             .appendingPathComponent("seasons.json")
     }
 
     func racesURL(season: String) -> URL {
         baseURL
-            .appendingPathComponent("api")
+            .appendingPathComponent("ergast")
             .appendingPathComponent("f1")
             .appendingPathComponent(season)
             .appendingPathComponent("races.json")
