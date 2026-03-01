@@ -20,8 +20,22 @@ struct JolpicaAPI: Sendable {
         return try decoder.decode(SeasonsResponseDTO.self, from: data)
     }
 
+    func seasons(limit: Int, offset: Int) async throws -> SeasonsResponseDTO {
+        let data = try await httpClient.get(
+            url: endpoint.seasonsURL(limit: limit, offset: offset)
+        )
+        return try decoder.decode(SeasonsResponseDTO.self, from: data)
+    }
+
     func races(season: String) async throws -> RacesResponseDTO {
         let data = try await httpClient.get(url: endpoint.racesURL(season: season))
+        return try decoder.decode(RacesResponseDTO.self, from: data)
+    }
+
+    func races(season: String, limit: Int, offset: Int) async throws -> RacesResponseDTO {
+        let data = try await httpClient.get(
+            url: endpoint.racesURL(season: season, limit: limit, offset: offset)
+        )
         return try decoder.decode(RacesResponseDTO.self, from: data)
     }
 }
