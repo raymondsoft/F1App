@@ -32,6 +32,21 @@ extension RacesResponseDTO {
         }
     }
 
+    func toPage() throws -> Page<Race> {
+        let metadata = try PaginationMetadata(
+            total: mrData.total,
+            limit: mrData.limit,
+            offset: mrData.offset
+        )
+
+        return try Page(
+            items: try toDomain(),
+            total: metadata.total,
+            limit: metadata.limit,
+            offset: metadata.offset
+        )
+    }
+
     private func parseCoordinate(_ value: String, label: String) throws -> Double {
         guard let coordinate = Double(value) else {
             throw DataError.mapping(underlying: "Invalid \(label): \(value)")

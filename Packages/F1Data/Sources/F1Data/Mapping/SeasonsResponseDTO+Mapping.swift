@@ -10,4 +10,19 @@ extension SeasonsResponseDTO {
             )
         }
     }
+
+    func toPage() throws -> Page<Season> {
+        let metadata = try PaginationMetadata(
+            total: mrData.total,
+            limit: mrData.limit,
+            offset: mrData.offset
+        )
+
+        return try Page(
+            items: toDomain(),
+            total: metadata.total,
+            limit: metadata.limit,
+            offset: metadata.offset
+        )
+    }
 }
