@@ -10,7 +10,7 @@ struct ContentView: View {
 
     var body: some View {
         SeasonsScreen(
-            getSeasonsUseCase: container.getSeasonsUseCase,
+            getSeasonsPageUseCase: container.getSeasonsPageUseCase,
             getRacesForSeasonUseCase: container.getRacesForSeasonUseCase
         )
     }
