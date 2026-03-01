@@ -63,10 +63,10 @@ struct RacesResponseDTOMappingTests {
 
         // Then
         #expect(response.mrData.total == "22")
-        #expect(response.mrData.limit == "30")
+        #expect(response.mrData.limit == "2")
         #expect(response.mrData.offset == "0")
         #expect(page.total == 22)
-        #expect(page.limit == 30)
+        #expect(page.limit == 2)
         #expect(page.offset == 0)
         #expect(page.hasMore == true)
     }

@@ -69,7 +69,7 @@ struct RacesResponseDTOTests {
 
         // Then
         #expect(response.mrData.total == "22")
-        #expect(response.mrData.limit == "30")
+        #expect(response.mrData.limit == "2")
         #expect(response.mrData.offset == "0")
     }
 }

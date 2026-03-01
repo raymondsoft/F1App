@@ -252,4 +252,30 @@ struct JolpicaF1RepositoryTests {
         #expect(page.offset == 0)
         #expect(page.hasMore == true)
     }
+
+    @Test("JolpicaF1Repository should map total and hasMore for paged races")
+    func testRacesPageMapsTotalAndHasMore() async throws {
+        // Given
+        let racesURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json?limit=2&offset=0")!
+        let racesData = try loadJSONFixture(named: "races_2023")
+        let httpClientStub = HTTPClientStub(
+            responses: [
+                racesURL: .success(racesData)
+            ]
+        )
+        let sut = JolpicaF1Repository(httpClient: httpClientStub)
+        let request = try PageRequest(limit: 2, offset: 0)
+
+        // When
+        let page = try await sut.racesPage(
+            seasonId: Season.ID(rawValue: "2023"),
+            request: request
+        )
+
+        // Then
+        #expect(page.total == 22)
+        #expect(page.limit == 2)
+        #expect(page.offset == 0)
+        #expect(page.hasMore == true)
+    }
 }

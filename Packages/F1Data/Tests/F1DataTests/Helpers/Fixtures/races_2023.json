@@ -3,7 +3,7 @@
     "xmlns": "http://ergast.com/mrd/1.5",
     "series": "f1",
     "url": "https://api.jolpi.ca/ergast/f1/2023/races.json",
-    "limit": "30",
+    "limit": "2",
     "offset": "0",
     "total": "22",
     "RaceTable": {

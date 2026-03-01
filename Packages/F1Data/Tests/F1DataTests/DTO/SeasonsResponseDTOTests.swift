@@ -13,8 +13,10 @@ struct SeasonsResponseDTOTests {
     @Test("SeasonsResponseDTO should decode seasons fixture")
     func testDecodingSucceeds() throws {
         // Given
+        let data = try loadJSONFixture(named: "seasons")
+
         // When
-        let response = try decodeSeasonsFixture()
+        let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
 
         // Then
         #expect(!response.mrData.seasonTable.seasons.isEmpty)
@@ -24,9 +26,10 @@ struct SeasonsResponseDTOTests {
     func testSeasonsCount() throws {
         // Given
         let expectedCount = 3
+        let data = try loadJSONFixture(named: "seasons")
 
         // When
-        let response = try decodeSeasonsFixture()
+        let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
 
         // Then
         #expect(response.mrData.seasonTable.seasons.count == expectedCount)
@@ -37,9 +40,10 @@ struct SeasonsResponseDTOTests {
         // Given
         let expectedSeason = "2023"
         let expectedURL = "https://en.wikipedia.org/wiki/2023_Formula_One_World_Championship"
+        let data = try loadJSONFixture(named: "seasons")
 
         // When
-        let response = try decodeSeasonsFixture()
+        let response = try decoder.decode(SeasonsResponseDTO.self, from: data)
         let first = response.mrData.seasonTable.seasons[0]
 
         // Then
@@ -59,10 +63,5 @@ struct SeasonsResponseDTOTests {
         #expect(response.mrData.total == "10")
         #expect(response.mrData.limit == "3")
         #expect(response.mrData.offset == "0")
-    }
-
-    private func decodeSeasonsFixture() throws -> SeasonsResponseDTO {
-        let data = try loadJSONFixture(named: "seasons")
-        return try decoder.decode(SeasonsResponseDTO.self, from: data)
     }
 }
