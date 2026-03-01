@@ -8,9 +8,15 @@ struct RacesResponseDTO: Decodable {
     }
 
     struct MRData: Decodable {
+        let limit: String?
+        let offset: String?
+        let total: String?
         let raceTable: RaceTable
 
         enum CodingKeys: String, CodingKey {
+            case limit
+            case offset
+            case total
             case raceTable = "RaceTable"
         }
 
