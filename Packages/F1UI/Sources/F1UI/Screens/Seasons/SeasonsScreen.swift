@@ -7,11 +7,23 @@ public struct SeasonsScreen: View {
 
     private let getSeasonsPage: @Sendable (PageRequest) async throws -> Page<Season>
     private let getRaces: @Sendable (Season.ID) async throws -> [Race]
+    private let getDriversPage: @Sendable (Season.ID, PageRequest) async throws -> Page<Driver>
+    private let getConstructorsPage: @Sendable (Season.ID, PageRequest) async throws -> Page<Constructor>
+    private let getRaceResultsPage: @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<RaceResult>
+    private let getQualifyingResultsPage: @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<QualifyingResult>
+    private let getDriverStandingsPage: @Sendable (Season.ID, PageRequest) async throws -> Page<DriverStanding>
+    private let getConstructorStandingsPage: @Sendable (Season.ID, PageRequest) async throws -> Page<ConstructorStanding>
     private let pageLimit: Int
 
     public init(
         getSeasonsPageUseCase: GetSeasonsPageUseCase,
+        getDriversPageUseCase: GetDriversPageUseCase,
+        getConstructorsPageUseCase: GetConstructorsPageUseCase,
         getRacesForSeasonUseCase: GetRacesForSeasonUseCase,
+        getRaceResultsPageUseCase: GetRaceResultsPageUseCase,
+        getQualifyingResultsPageUseCase: GetQualifyingResultsPageUseCase,
+        getDriverStandingsPageUseCase: GetDriverStandingsPageUseCase,
+        getConstructorStandingsPageUseCase: GetConstructorStandingsPageUseCase,
         pageLimit: Int = 30
     ) {
         self.getSeasonsPage = { request in
@@ -19,6 +31,24 @@ public struct SeasonsScreen: View {
         }
         self.getRaces = { seasonId in
             try await getRacesForSeasonUseCase(seasonId: seasonId)
+        }
+        self.getDriversPage = { seasonId, request in
+            try await getDriversPageUseCase(seasonId: seasonId, request: request)
+        }
+        self.getConstructorsPage = { seasonId, request in
+            try await getConstructorsPageUseCase(seasonId: seasonId, request: request)
+        }
+        self.getRaceResultsPage = { seasonId, round, request in
+            try await getRaceResultsPageUseCase(seasonId: seasonId, round: round, request: request)
+        }
+        self.getQualifyingResultsPage = { seasonId, round, request in
+            try await getQualifyingResultsPageUseCase(seasonId: seasonId, round: round, request: request)
+        }
+        self.getDriverStandingsPage = { seasonId, request in
+            try await getDriverStandingsPageUseCase(seasonId: seasonId, request: request)
+        }
+        self.getConstructorStandingsPage = { seasonId, request in
+            try await getConstructorStandingsPageUseCase(seasonId: seasonId, request: request)
         }
         self.pageLimit = pageLimit
         self._state = State(initialValue: .initial)
@@ -31,6 +61,24 @@ public struct SeasonsScreen: View {
     ) {
         self.getSeasonsPage = getSeasonsPage
         self.getRaces = getRaces
+        self.getDriversPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getConstructorsPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getRaceResultsPage = { _, _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getQualifyingResultsPage = { _, _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getDriverStandingsPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getConstructorStandingsPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
         self.pageLimit = pageLimit
         self._state = State(initialValue: .initial)
     }
@@ -45,6 +93,24 @@ public struct SeasonsScreen: View {
             )
         }
         self.getRaces = { _ in [] }
+        self.getDriversPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getConstructorsPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getRaceResultsPage = { _, _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getQualifyingResultsPage = { _, _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getDriverStandingsPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getConstructorStandingsPage = { _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
         self.pageLimit = 30
         self._state = State(initialValue: state)
     }
@@ -82,10 +148,46 @@ public struct SeasonsScreen: View {
         } else {
             List {
                 ForEach(state.items, id: \.id) { season in
-                    NavigationLink {
-                        RacesScreen(seasonId: Season.ID(rawValue: season.id), getRaces: getRaces)
-                    } label: {
-                        F1UI.Season.Row(season)
+                    let seasonId = Season.ID(rawValue: season.id)
+
+                    Section {
+                        NavigationLink {
+                            RacesScreen(
+                                seasonId: seasonId,
+                                getRaces: getRaces,
+                                getRaceResultsPage: getRaceResultsPage,
+                                getQualifyingResultsPage: getQualifyingResultsPage
+                            )
+                        } label: {
+                            F1UI.Season.Row(season)
+                        }
+
+                        NavigationLink {
+                            DriversScreen(seasonId: seasonId, getDriversPage: getDriversPage)
+                        } label: {
+                            Label("Drivers", systemImage: "person.2")
+                        }
+
+                        NavigationLink {
+                            ConstructorsScreen(seasonId: seasonId, getConstructorsPage: getConstructorsPage)
+                        } label: {
+                            Label("Constructors", systemImage: "wrench.and.screwdriver")
+                        }
+
+                        NavigationLink {
+                            DriverStandingsScreen(seasonId: seasonId, getDriverStandingsPage: getDriverStandingsPage)
+                        } label: {
+                            Label("Driver Standings", systemImage: "list.number")
+                        }
+
+                        NavigationLink {
+                            ConstructorStandingsScreen(
+                                seasonId: seasonId,
+                                getConstructorStandingsPage: getConstructorStandingsPage
+                            )
+                        } label: {
+                            Label("Constructor Standings", systemImage: "list.number.rectangle")
+                        }
                     }
                     .onAppear {
                         Task {

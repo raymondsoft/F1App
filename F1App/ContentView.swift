@@ -11,7 +11,13 @@ struct ContentView: View {
     var body: some View {
         SeasonsScreen(
             getSeasonsPageUseCase: container.getSeasonsPageUseCase,
-            getRacesForSeasonUseCase: container.getRacesForSeasonUseCase
+            getDriversPageUseCase: container.getDriversPageUseCase,
+            getConstructorsPageUseCase: container.getConstructorsPageUseCase,
+            getRacesForSeasonUseCase: container.getRacesForSeasonUseCase,
+            getRaceResultsPageUseCase: container.getRaceResultsPageUseCase,
+            getQualifyingResultsPageUseCase: container.getQualifyingResultsPageUseCase,
+            getDriverStandingsPageUseCase: container.getDriverStandingsPageUseCase,
+            getConstructorStandingsPageUseCase: container.getConstructorStandingsPageUseCase
         )
     }
 }

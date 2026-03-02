@@ -8,27 +8,50 @@ public struct RacesScreen: View {
 
     private let seasonId: Season.ID
     private let getRaces: @Sendable (Season.ID) async throws -> [Race]
+    private let getRaceResultsPage: @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<RaceResult>
+    private let getQualifyingResultsPage: @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<QualifyingResult>
 
-    public init(seasonId: Season.ID, getRacesForSeasonUseCase: GetRacesForSeasonUseCase) {
+    public init(
+        seasonId: Season.ID,
+        getRacesForSeasonUseCase: GetRacesForSeasonUseCase,
+        getRaceResultsPageUseCase: GetRaceResultsPageUseCase,
+        getQualifyingResultsPageUseCase: GetQualifyingResultsPageUseCase
+    ) {
         self.seasonId = seasonId
         self.getRaces = { selectedSeasonId in
             try await getRacesForSeasonUseCase(seasonId: selectedSeasonId)
+        }
+        self.getRaceResultsPage = { seasonId, round, request in
+            try await getRaceResultsPageUseCase(seasonId: seasonId, round: round, request: request)
+        }
+        self.getQualifyingResultsPage = { seasonId, round, request in
+            try await getQualifyingResultsPageUseCase(seasonId: seasonId, round: round, request: request)
         }
         self._state = SwiftUI.State(initialValue: .idle)
     }
 
     init(
         seasonId: Season.ID,
-        getRaces: @escaping @Sendable (Season.ID) async throws -> [Race]
+        getRaces: @escaping @Sendable (Season.ID) async throws -> [Race],
+        getRaceResultsPage: @escaping @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<RaceResult>,
+        getQualifyingResultsPage: @escaping @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<QualifyingResult>
     ) {
         self.seasonId = seasonId
         self.getRaces = getRaces
+        self.getRaceResultsPage = getRaceResultsPage
+        self.getQualifyingResultsPage = getQualifyingResultsPage
         self._state = SwiftUI.State(initialValue: .idle)
     }
 
     init(seasonId: Season.ID, previewState state: ViewState) {
         self.seasonId = seasonId
         self.getRaces = { _ in [] }
+        self.getRaceResultsPage = { _, _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
+        self.getQualifyingResultsPage = { _, _, request in
+            try Page(items: [], total: 0, limit: request.limit, offset: request.offset)
+        }
         self._state = SwiftUI.State(initialValue: state)
     }
 
@@ -51,7 +74,31 @@ public struct RacesScreen: View {
 
         case .loaded(let races):
             List(races, id: \.id) { race in
-                F1UI.Race.Row(race)
+                if let route = Self.makeRouteIdentifiers(from: race.id) {
+                    Section {
+                        NavigationLink {
+                            RaceResultsScreen(
+                                seasonId: route.seasonId,
+                                round: route.round,
+                                getRaceResultsPage: getRaceResultsPage
+                            )
+                        } label: {
+                            F1UI.Race.Row(race)
+                        }
+
+                        NavigationLink {
+                            QualifyingResultsScreen(
+                                seasonId: route.seasonId,
+                                round: route.round,
+                                getQualifyingResultsPage: getQualifyingResultsPage
+                            )
+                        } label: {
+                            Label("Qualifying", systemImage: "timer")
+                        }
+                    }
+                } else {
+                    F1UI.Race.Row(race)
+                }
             }
 
         case .error(let message):
@@ -148,6 +195,19 @@ public struct RacesScreen: View {
             sign,
             hours,
             minutes
+        )
+    }
+
+    private static func makeRouteIdentifiers(from id: String) -> (seasonId: Season.ID, round: Race.Round)? {
+        let components = id.split(separator: "-", maxSplits: 1).map(String.init)
+
+        guard components.count == 2 else {
+            return nil
+        }
+
+        return (
+            seasonId: Season.ID(rawValue: components[0]),
+            round: Race.Round(rawValue: components[1])
         )
     }
 }
