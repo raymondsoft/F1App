@@ -217,3 +217,41 @@ extension ConstructorsScreen {
         )
     }
 }
+
+#Preview("Constructors Loading More") {
+    NavigationStack {
+        ConstructorsScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true),
+                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true)
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: true,
+                hasMore: true,
+                nextOffset: 30,
+                error: nil
+            )
+        )
+    }
+}
+
+#Preview("Constructors Load More Error") {
+    NavigationStack {
+        ConstructorsScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true),
+                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true)
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: false,
+                hasMore: true,
+                nextOffset: 30,
+                error: "Failed to load constructors. Please try again."
+            )
+        )
+    }
+}

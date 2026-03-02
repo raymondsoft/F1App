@@ -214,3 +214,41 @@ extension ConstructorStandingsScreen {
         )
     }
 }
+
+#Preview("Constructor Standings Loading More") {
+    NavigationStack {
+        ConstructorStandingsScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "2024-mclaren", positionText: "1", title: "McLaren", subtitle: "British", pointsText: "666 pts", winsText: "6 wins"),
+                    .init(id: "2024-ferrari", positionText: "2", title: "Ferrari", subtitle: "Italian", pointsText: "652 pts", winsText: "5 wins")
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: true,
+                hasMore: true,
+                nextOffset: 30,
+                error: nil
+            )
+        )
+    }
+}
+
+#Preview("Constructor Standings Load More Error") {
+    NavigationStack {
+        ConstructorStandingsScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "2024-mclaren", positionText: "1", title: "McLaren", subtitle: "British", pointsText: "666 pts", winsText: "6 wins"),
+                    .init(id: "2024-ferrari", positionText: "2", title: "Ferrari", subtitle: "Italian", pointsText: "652 pts", winsText: "5 wins")
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: false,
+                hasMore: true,
+                nextOffset: 30,
+                error: "Failed to load constructor standings. Please try again."
+            )
+        )
+    }
+}

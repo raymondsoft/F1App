@@ -289,15 +289,11 @@ It also owns root navigation entry and environment configuration.
 
 ## Current status
 
-Implemented today:
+Implemented:
 
 - namespace root in `Sources/F1UI/Namespace/`
-- `F1UI.Season.Row` as a namespaced reusable component
-- nested `ViewData` for `F1UI.Season.Row`
-- `SeasonsScreen` with async closure injection, explicit screen state, friendly error mapping, and Domain-to-UI mapping
-- Swift Testing coverage for screen mapping and user-facing error state
-
-Planned but not yet implemented:
-
-- additional component namespaces such as `F1UI.Race.Row` and `F1UI.Circuit.Row`
-- additional screens such as `RacesScreen`
+- namespaced reusable components for `Season`, `Circuit`, `Race`, `Driver`, `Constructor`, `Result`, `Qualifying`, and `Standing`
+- screen entry points for `SeasonsScreen`, `RacesScreen`, `DriversScreen`, `ConstructorsScreen`, `RaceResultsScreen`, `QualifyingResultsScreen`, `DriverStandingsScreen`, and `ConstructorStandingsScreen`
+- paginated list state handling for long-running list screens
+- Swift Testing coverage for component `ViewData` contracts plus screen mapping and error-state helpers
+- dedicated test files split by screen and component responsibility

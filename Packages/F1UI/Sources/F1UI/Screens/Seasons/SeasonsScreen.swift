@@ -24,6 +24,17 @@ public struct SeasonsScreen: View {
         self._state = State(initialValue: .initial)
     }
 
+    init(
+        getSeasonsPage: @escaping @Sendable (PageRequest) async throws -> Page<Season>,
+        getRaces: @escaping @Sendable (Season.ID) async throws -> [Race],
+        pageLimit: Int = 30
+    ) {
+        self.getSeasonsPage = getSeasonsPage
+        self.getRaces = getRaces
+        self.pageLimit = pageLimit
+        self._state = State(initialValue: .initial)
+    }
+
     init(previewState state: ViewState) {
         self.getSeasonsPage = { request in
             try Page(
@@ -93,7 +104,7 @@ public struct SeasonsScreen: View {
     }
 
     private var shouldLoadInitialPage: Bool {
-        state.items.isEmpty && !state.isLoadingInitial && state.error == nil
+        Self.shouldLoadInitialPage(state: state)
     }
 
     private var footerProgressView: some View {
@@ -121,58 +132,26 @@ public struct SeasonsScreen: View {
 
     @MainActor
     private func loadInitialPage() async {
-        guard let request = makePageRequest(offset: 0) else {
-            state = Self.makeInitialErrorState()
-            return
-        }
-
-        state = .loadingInitial
-
-        do {
-            let page = try await getSeasonsPage(request)
-            state = Self.makeLoadedState(from: page)
-        } catch {
-            state = Self.makeInitialErrorState(from: error)
-        }
+        state = await Self.loadInitialPageState(
+            pageLimit: pageLimit,
+            getSeasonsPage: getSeasonsPage
+        )
     }
 
     @MainActor
     private func loadMoreIfNeeded(afterAppearing seasonId: String) async {
-        guard seasonId == state.items.last?.id else {
-            return
-        }
-
-        guard state.hasMore, !state.isLoadingInitial, !state.isLoadingMore else {
-            return
-        }
+        guard Self.shouldLoadMore(afterAppearing: seasonId, state: state) else { return }
 
         await loadNextPage()
     }
 
     @MainActor
     private func loadNextPage() async {
-        guard state.hasMore, !state.isLoadingInitial, !state.isLoadingMore else {
-            return
-        }
-
-        guard let request = makePageRequest(offset: state.nextOffset) else {
-            state = Self.makeLoadMoreErrorState(from: state)
-            return
-        }
-
-        let currentItems = state.items
-        state = Self.makeLoadingMoreState(from: state)
-
-        do {
-            let page = try await getSeasonsPage(request)
-            state = Self.makeLoadedState(from: page, existingItems: currentItems)
-        } catch {
-            state = Self.makeLoadMoreErrorState(from: state, error: error)
-        }
-    }
-
-    private func makePageRequest(offset: Int) -> PageRequest? {
-        try? PageRequest(limit: pageLimit, offset: offset)
+        state = await Self.loadNextPageState(
+            from: state,
+            pageLimit: pageLimit,
+            getSeasonsPage: getSeasonsPage
+        )
     }
 
     static func makeLoadedState(
@@ -245,6 +224,55 @@ public struct SeasonsScreen: View {
 
         return mergedItems
     }
+
+    static func shouldLoadInitialPage(state: ViewState) -> Bool {
+        state.items.isEmpty && !state.isLoadingInitial && state.error == nil
+    }
+
+    static func shouldLoadMore(afterAppearing seasonId: String, state: ViewState) -> Bool {
+        seasonId == state.items.last?.id && state.hasMore && !state.isLoadingInitial && !state.isLoadingMore
+    }
+
+    static func loadInitialPageState(
+        pageLimit: Int,
+        getSeasonsPage: @Sendable (PageRequest) async throws -> Page<Season>
+    ) async -> ViewState {
+        guard let request = makePageRequest(limit: pageLimit, offset: 0) else {
+            return makeInitialErrorState()
+        }
+
+        do {
+            let page = try await getSeasonsPage(request)
+            return makeLoadedState(from: page)
+        } catch {
+            return makeInitialErrorState(from: error)
+        }
+    }
+
+    static func loadNextPageState(
+        from state: ViewState,
+        pageLimit: Int,
+        getSeasonsPage: @Sendable (PageRequest) async throws -> Page<Season>
+    ) async -> ViewState {
+        guard state.hasMore, !state.isLoadingInitial, !state.isLoadingMore else {
+            return state
+        }
+
+        guard let request = makePageRequest(limit: pageLimit, offset: state.nextOffset) else {
+            return makeLoadMoreErrorState(from: state)
+        }
+
+        do {
+            let page = try await getSeasonsPage(request)
+            return makeLoadedState(from: page, existingItems: state.items)
+        } catch {
+            return makeLoadMoreErrorState(from: state, error: error)
+        }
+    }
+
+    private static func makePageRequest(limit: Int, offset: Int) -> PageRequest? {
+        try? PageRequest(limit: limit, offset: offset)
+    }
 }
 
 extension SeasonsScreen {
@@ -314,6 +342,38 @@ extension SeasonsScreen {
             hasMore: true,
             nextOffset: 30,
             error: nil
+        )
+    )
+}
+
+#Preview("Loading More Footer") {
+    SeasonsScreen(
+        previewState: .init(
+            items: [
+                .init(id: "2024", title: "2024", showsWikipediaIndicator: true),
+                .init(id: "2023", title: "2023", showsWikipediaIndicator: false)
+            ],
+            isLoadingInitial: false,
+            isLoadingMore: true,
+            hasMore: true,
+            nextOffset: 30,
+            error: nil
+        )
+    )
+}
+
+#Preview("Load More Error Footer") {
+    SeasonsScreen(
+        previewState: .init(
+            items: [
+                .init(id: "2024", title: "2024", showsWikipediaIndicator: true),
+                .init(id: "2023", title: "2023", showsWikipediaIndicator: false)
+            ],
+            isLoadingInitial: false,
+            isLoadingMore: false,
+            hasMore: true,
+            nextOffset: 30,
+            error: "Failed to load seasons. Please try again."
         )
     )
 }

@@ -255,3 +255,41 @@ extension DriversScreen {
         )
     }
 }
+
+#Preview("Drivers Loading More") {
+    NavigationStack {
+        DriversScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "max_verstappen", name: "Max Verstappen", nationality: "Dutch", showsWikipediaIndicator: true),
+                    .init(id: "lando_norris", name: "Lando Norris", nationality: "British", showsWikipediaIndicator: true)
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: true,
+                hasMore: true,
+                nextOffset: 30,
+                error: nil
+            )
+        )
+    }
+}
+
+#Preview("Drivers Load More Error") {
+    NavigationStack {
+        DriversScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "max_verstappen", name: "Max Verstappen", nationality: "Dutch", showsWikipediaIndicator: true),
+                    .init(id: "lando_norris", name: "Lando Norris", nationality: "British", showsWikipediaIndicator: true)
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: false,
+                hasMore: true,
+                nextOffset: 30,
+                error: "Failed to load drivers. Please try again."
+            )
+        )
+    }
+}

@@ -214,3 +214,41 @@ extension DriverStandingsScreen {
         )
     }
 }
+
+#Preview("Driver Standings Loading More") {
+    NavigationStack {
+        DriverStandingsScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "2024-max_verstappen", positionText: "1", title: "Max Verstappen", subtitle: "Red Bull Racing", pointsText: "575 pts", winsText: "9 wins"),
+                    .init(id: "2024-lando_norris", positionText: "2", title: "Lando Norris", subtitle: "McLaren", pointsText: "374 pts", winsText: "3 wins")
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: true,
+                hasMore: true,
+                nextOffset: 30,
+                error: nil
+            )
+        )
+    }
+}
+
+#Preview("Driver Standings Load More Error") {
+    NavigationStack {
+        DriverStandingsScreen(
+            seasonId: .init(rawValue: "2024"),
+            previewState: .init(
+                items: [
+                    .init(id: "2024-max_verstappen", positionText: "1", title: "Max Verstappen", subtitle: "Red Bull Racing", pointsText: "575 pts", winsText: "9 wins"),
+                    .init(id: "2024-lando_norris", positionText: "2", title: "Lando Norris", subtitle: "McLaren", pointsText: "374 pts", winsText: "3 wins")
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: false,
+                hasMore: true,
+                nextOffset: 30,
+                error: "Failed to load driver standings. Please try again."
+            )
+        )
+    }
+}

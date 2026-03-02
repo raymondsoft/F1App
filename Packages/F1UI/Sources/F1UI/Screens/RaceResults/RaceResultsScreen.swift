@@ -234,3 +234,43 @@ extension RaceResultsScreen {
         )
     }
 }
+
+#Preview("Race Results Loading More") {
+    NavigationStack {
+        RaceResultsScreen(
+            seasonId: .init(rawValue: "2024"),
+            round: .init(rawValue: "1"),
+            previewState: .init(
+                items: [
+                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultText: "1:31:44.742"),
+                    .init(id: "2024-1-sergio_perez", positionText: "2", driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultText: "+22.457s")
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: true,
+                hasMore: true,
+                nextOffset: 30,
+                error: nil
+            )
+        )
+    }
+}
+
+#Preview("Race Results Load More Error") {
+    NavigationStack {
+        RaceResultsScreen(
+            seasonId: .init(rawValue: "2024"),
+            round: .init(rawValue: "1"),
+            previewState: .init(
+                items: [
+                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultText: "1:31:44.742"),
+                    .init(id: "2024-1-sergio_perez", positionText: "2", driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultText: "+22.457s")
+                ],
+                isLoadingInitial: false,
+                isLoadingMore: false,
+                hasMore: true,
+                nextOffset: 30,
+                error: "Failed to load race results. Please try again."
+            )
+        )
+    }
+}

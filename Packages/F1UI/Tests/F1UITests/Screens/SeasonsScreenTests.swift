@@ -134,10 +134,189 @@ struct SeasonsScreenTests {
             error: "Failed to load seasons. Please try again."
         ))
     }
+
+    @Test("Loading more after the last visible season requests the next page and appends new items")
+    func loadMoreAfterLastVisibleSeasonAppendsNextPage() async throws {
+        // Given
+        let spy = SeasonsPageSpy(responses: [
+            .success(try makePage(
+                seasons: [
+                    makeSeason(id: "2024", wikipediaURL: URL(string: "https://example.com/2024")),
+                    makeSeason(id: "2023", wikipediaURL: nil)
+                ],
+                total: 3,
+                limit: 2,
+                offset: 0
+            )),
+            .success(try makePage(
+                seasons: [
+                    makeSeason(id: "2022", wikipediaURL: URL(string: "https://example.com/2022"))
+                ],
+                total: 3,
+                limit: 2,
+                offset: 2
+            ))
+        ])
+        let initialState = await SeasonsScreen.loadInitialPageState(
+            pageLimit: 2,
+            getSeasonsPage: { request in try await spy.response(for: request) }
+        )
+
+        // When
+        let shouldLoadMore = SeasonsScreen.shouldLoadMore(afterAppearing: "2023", state: initialState)
+        let state = await SeasonsScreen.loadNextPageState(
+            from: initialState,
+            pageLimit: 2,
+            getSeasonsPage: { request in try await spy.response(for: request) }
+        )
+
+        // Then
+        #expect(shouldLoadMore)
+        #expect(await spy.recordedOffsets() == [0, 2])
+        #expect(state == .init(
+            items: [
+                .init(id: "2024", title: "2024", showsWikipediaIndicator: true),
+                .init(id: "2023", title: "2023", showsWikipediaIndicator: false),
+                .init(id: "2022", title: "2022", showsWikipediaIndicator: true)
+            ],
+            isLoadingInitial: false,
+            isLoadingMore: false,
+            hasMore: false,
+            nextOffset: 4,
+            error: nil
+        ))
+    }
+
+    @Test("Appearing a non-last season does not trigger an extra page request")
+    func nonLastVisibleSeasonDoesNotTriggerLoadMore() async throws {
+        // Given
+        let spy = SeasonsPageSpy(responses: [
+            .success(try makePage(
+                seasons: [
+                    makeSeason(id: "2024", wikipediaURL: URL(string: "https://example.com/2024")),
+                    makeSeason(id: "2023", wikipediaURL: nil)
+                ],
+                total: 4,
+                limit: 2,
+                offset: 0
+            ))
+        ])
+        let initialState = await SeasonsScreen.loadInitialPageState(
+            pageLimit: 2,
+            getSeasonsPage: { request in try await spy.response(for: request) }
+        )
+
+        // When
+        let shouldLoadMore = SeasonsScreen.shouldLoadMore(afterAppearing: "2024", state: initialState)
+
+        // Then
+        #expect(!shouldLoadMore)
+        #expect(await spy.recordedOffsets() == [0])
+        #expect(initialState == .init(
+            items: [
+                .init(id: "2024", title: "2024", showsWikipediaIndicator: true),
+                .init(id: "2023", title: "2023", showsWikipediaIndicator: false)
+            ],
+            isLoadingInitial: false,
+            isLoadingMore: false,
+            hasMore: true,
+            nextOffset: 2,
+            error: nil
+        ))
+    }
+
+    @Test("Retry after a load-more failure requests the same next page again and preserves unique ids")
+    func retryAfterLoadMoreFailureRequestsNextPageAgain() async throws {
+        // Given
+        let spy = SeasonsPageSpy(responses: [
+            .success(try makePage(
+                seasons: [
+                    makeSeason(id: "2024", wikipediaURL: URL(string: "https://example.com/2024")),
+                    makeSeason(id: "2023", wikipediaURL: nil)
+                ],
+                total: 3,
+                limit: 2,
+                offset: 0
+            )),
+            .failure(SeasonsScreenTestError()),
+            .success(try makePage(
+                seasons: [
+                    makeSeason(id: "2023", wikipediaURL: nil),
+                    makeSeason(id: "2022", wikipediaURL: URL(string: "https://example.com/2022"))
+                ],
+                total: 3,
+                limit: 2,
+                offset: 2
+            ))
+        ])
+        let initialState = await SeasonsScreen.loadInitialPageState(
+            pageLimit: 2,
+            getSeasonsPage: { request in try await spy.response(for: request) }
+        )
+
+        // When
+        let failedState = await SeasonsScreen.loadNextPageState(
+            from: initialState,
+            pageLimit: 2,
+            getSeasonsPage: { request in try await spy.response(for: request) }
+        )
+        let state = await SeasonsScreen.loadNextPageState(
+            from: failedState,
+            pageLimit: 2,
+            getSeasonsPage: { request in try await spy.response(for: request) }
+        )
+
+        // Then
+        #expect(await spy.recordedOffsets() == [0, 2, 2])
+        #expect(state == .init(
+            items: [
+                .init(id: "2024", title: "2024", showsWikipediaIndicator: true),
+                .init(id: "2023", title: "2023", showsWikipediaIndicator: false),
+                .init(id: "2022", title: "2022", showsWikipediaIndicator: true)
+            ],
+            isLoadingInitial: false,
+            isLoadingMore: false,
+            hasMore: false,
+            nextOffset: 4,
+            error: nil
+        ))
+    }
 }
 
 private struct SeasonsScreenTestError: LocalizedError {
     var errorDescription: String? {
         "The seasons request failed."
     }
+}
+
+private actor SeasonsPageSpy {
+    private var remainingResponses: [Result<Page<Season>, Error>]
+    private var requests: [PageRequest] = []
+
+    init(responses: [Result<Page<Season>, Error>]) {
+        self.remainingResponses = responses
+    }
+
+    func response(for request: PageRequest) throws -> Page<Season> {
+        requests.append(request)
+        let response = remainingResponses.removeFirst()
+        return try response.get()
+    }
+
+    func recordedOffsets() -> [Int] {
+        requests.map(\.offset)
+    }
+}
+
+private func makePage(
+    seasons: [Season],
+    total: Int,
+    limit: Int,
+    offset: Int
+) throws -> Page<Season> {
+    try Page(items: seasons, total: total, limit: limit, offset: offset)
+}
+
+private func makeSeason(id: String, wikipediaURL: URL?) -> Season {
+    Season(id: .init(rawValue: id), wikipediaURL: wikipediaURL)
 }
