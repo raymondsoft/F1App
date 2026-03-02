@@ -2,19 +2,28 @@
 
 `F1Domain` is the domain layer for Formula 1 business models used across the project.
 
-It contains stable domain entities and the repository contract needed to access them:
+It contains stable domain entities, pagination models, and the repository contract needed to access them:
 
 - `Season`
 - `Race`
 - `Circuit`
 - `Location`
+- `Driver`
+- `Constructor`
+- `RaceResult`
+- `QualifyingResult`
+- `DriverStanding`
+- `ConstructorStanding`
+- `PageRequest`
+- `Page`
+- `PaginationError`
 - `F1Repository`
 
 It does not contain networking, DTOs, persistence, UI code, app flow, or data-source implementations.
 
 In the project's Clean Architecture, this package defines the language of the core F1 domain. Other layers depend on these models to exchange data without depending on transport or presentation details.
 
-The current structure is intentionally small:
+The current structure is intentionally small and responsibility-oriented:
 
 - `Sources/F1Domain/Entities/` holds the domain value types.
 - `Sources/F1Domain/Repositories/` holds repository protocols only.
