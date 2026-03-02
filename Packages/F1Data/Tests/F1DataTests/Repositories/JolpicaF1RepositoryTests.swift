@@ -163,6 +163,28 @@ struct JolpicaF1RepositoryTests {
         }
     }
 
+    @Test("JolpicaF1Repository should propagate decoding errors from driver standings page")
+    func testDriverStandingsPagePropagatesDecodingError() async {
+        // Given
+        let httpClientMock = HTTPClientMock(result: .success(Data("not-json".utf8)))
+        let sut = JolpicaF1Repository(httpClient: httpClientMock)
+        let request = try! PageRequest(limit: 2, offset: 0)
+
+        // When
+        do {
+            _ = try await sut.driverStandingsPage(
+                seasonId: Season.ID(rawValue: "2023"),
+                request: request
+            )
+            Issue.record("Expected DecodingError to be thrown")
+        } catch is DecodingError {
+            // Then
+            #expect(Bool(true))
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
+        }
+    }
+
     @Test("JolpicaF1Repository should propagate mapping errors from race results page")
     func testRaceResultsPagePropagatesMappingError() async {
         // Given

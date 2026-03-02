@@ -2,7 +2,7 @@
 
 `F1Data` is the data layer for the project. It is responsible for loading raw Formula 1 data from external sources, validating it, and mapping it into `F1Domain` entities.
 
-Today, the package contains a concrete repository implementation backed by the Jolpica API. It currently supports loading seasons and races.
+Today, the package contains a concrete repository implementation backed by the Jolpica API. It supports seasons, races, drivers, constructors, race results, qualifying results, driver standings, and constructor standings.
 
 This package contains:
 
@@ -26,6 +26,6 @@ The current folder structure is organized by responsibility:
 - `Sources/F1Data/Errors/` contains data-layer errors.
 - `Tests/F1DataTests/` mirrors these responsibilities with focused test suites and shared helpers.
 
-Other layers interact with `F1Data` through domain-facing interfaces. `F1Data` conforms to `F1Domain.F1Repository` and returns domain entities such as `Season` and `Race` rather than raw DTOs.
+Other layers interact with `F1Data` through domain-facing interfaces. `F1Data` conforms to `F1Domain.F1Repository` and returns domain entities and paged domain responses such as `[Season]`, `[Race]`, and `Page<Driver>` rather than raw DTOs.
 
-The package is designed to keep external API details isolated. DTOs remain internal to the data layer, mapping is explicit, and parsing is strict for values such as dates, times, coordinates, and HTTP responses.
+The package is designed to keep external API details isolated. DTOs remain internal to the data layer, mapping is explicit, pagination metadata is decoded and mapped in the data layer, and parsing is strict for values such as dates, times, coordinates, and numeric transport fields.

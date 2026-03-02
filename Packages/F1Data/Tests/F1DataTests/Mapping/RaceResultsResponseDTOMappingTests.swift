@@ -93,6 +93,62 @@ struct RaceResultsResponseDTOMappingTests {
         #expect(page.items[0].resultTime == .status("Collision"))
     }
 
+    @Test("RaceResultsResponseDTO should classify digit-only result strings as status values")
+    func testRaceResultsDigitOnlyStatusClassification() throws {
+        // Given
+        let response = RaceResultsResponseDTO(
+            mrData: .init(
+                total: "20",
+                limit: "1",
+                offset: "0",
+                raceTable: .init(
+                    season: "2023",
+                    round: "1",
+                    races: [
+                        .init(
+                            season: "2023",
+                            round: "1",
+                            raceName: "Bahrain Grand Prix",
+                            date: "2023-03-05",
+                            time: "15:00:00Z",
+                            results: [
+                                .init(
+                                    position: nil,
+                                    positionText: "R",
+                                    points: "0",
+                                    driver: .init(
+                                        driverId: "alonso",
+                                        url: "https://en.wikipedia.org/wiki/Fernando_Alonso",
+                                        givenName: "Fernando",
+                                        familyName: "Alonso",
+                                        dateOfBirth: "1981-07-29",
+                                        nationality: "Spanish"
+                                    ),
+                                    constructor: .init(
+                                        constructorId: "aston_martin",
+                                        url: "https://en.wikipedia.org/wiki/Aston_Martin_in_Formula_One",
+                                        name: "Aston Martin",
+                                        nationality: "British"
+                                    ),
+                                    grid: "5",
+                                    laps: "10",
+                                    status: "123",
+                                    time: nil
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+        )
+
+        // When
+        let page = try response.toPage()
+
+        // Then
+        #expect(page.items[0].resultTime == .status("123"))
+    }
+
     @Test("RaceResultsResponseDTO should throw mapping error for invalid numeric fields")
     func testRaceResultsMappingInvalidNumericValue() {
         // Given
