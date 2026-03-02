@@ -4,100 +4,113 @@ import Testing
 
 @Suite
 struct JolpicaEndpointTests {
-    @Test("Seasons endpoint should use default Jolpica base URL")
-    func testSeasonsURLWithDefaultBase() {
+    @Test("JolpicaEndpoint should build seasons URL with default base")
+    func testSeasonsURL() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!
 
         // When
         let url = sut.seasonsURL()
 
         // Then
-        #expect(url == expectedURL)
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!)
     }
 
-    @Test("Races endpoint should include the provided season segment")
-    func testRacesURLForSeason() {
+    @Test("JolpicaEndpoint should build races URL for a season")
+    func testRacesURL() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json")!
 
         // When
         let url = sut.racesURL(season: "2023")
 
         // Then
-        #expect(url == expectedURL)
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json")!)
     }
 
-    @Test("Endpoints should use a custom base URL when provided")
-    func testEndpointsWithCustomBaseURL() {
-        // Given
-        let sut = JolpicaEndpoint(baseURL: URL(string: "https://example.com")!)
-        let expectedSeasonsURL = URL(string: "https://example.com/ergast/f1/seasons.json")!
-        let expectedRacesURL = URL(string: "https://example.com/ergast/f1/2024/races.json")!
-
-        // When
-        let seasonsURL = sut.seasonsURL()
-        let racesURL = sut.racesURL(season: "2024")
-
-        // Then
-        #expect(seasonsURL == expectedSeasonsURL)
-        #expect(racesURL == expectedRacesURL)
-    }
-
-    @Test("Endpoints should preserve existing path segments in custom base URL")
-    func testEndpointsWithCustomBaseURLContainingPath() {
+    @Test("JolpicaEndpoint should preserve custom base path segments")
+    func testCustomBaseURLWithPath() {
         // Given
         let sut = JolpicaEndpoint(baseURL: URL(string: "https://example.com/proxy/v1")!)
-        let expectedSeasonsURL = URL(string: "https://example.com/proxy/v1/ergast/f1/seasons.json")!
-        let expectedRacesURL = URL(string: "https://example.com/proxy/v1/ergast/f1/2024/races.json")!
 
         // When
         let seasonsURL = sut.seasonsURL()
-        let racesURL = sut.racesURL(season: "2024")
+        let racesURL = sut.racesURL(season: "current")
 
         // Then
-        #expect(seasonsURL == expectedSeasonsURL)
-        #expect(racesURL == expectedRacesURL)
+        #expect(seasonsURL == URL(string: "https://example.com/proxy/v1/ergast/f1/seasons.json")!)
+        #expect(racesURL == URL(string: "https://example.com/proxy/v1/ergast/f1/current/races.json")!)
     }
 
-    @Test("Races endpoint should accept non-numeric season input as raw path segment")
-    func testRacesURLWithNonNumericSeason() {
+    @Test("JolpicaEndpoint should build drivers URL with pagination")
+    func testDriversURL() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/current/races.json")!
 
         // When
-        let url = sut.racesURL(season: "current")
+        let url = sut.driversURL(season: "2023", limit: 20, offset: 40)
 
         // Then
-        #expect(url == expectedURL)
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/2023/drivers.json?limit=20&offset=40")!)
     }
 
-    @Test("Paged seasons endpoint should include limit and offset query parameters")
-    func testPagedSeasonsURL() {
+    @Test("JolpicaEndpoint should build constructors URL with pagination")
+    func testConstructorsURL() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json?limit=20&offset=40")!
 
         // When
-        let url = sut.seasonsURL(limit: 20, offset: 40)
+        let url = sut.constructorsURL(season: "2023", limit: 20, offset: 40)
 
         // Then
-        #expect(url == expectedURL)
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/2023/constructors.json?limit=20&offset=40")!)
     }
 
-    @Test("Paged races endpoint should include limit and offset query parameters")
-    func testPagedRacesURL() {
+    @Test("JolpicaEndpoint should build race results URL with pagination")
+    func testRaceResultsURL() {
         // Given
         let sut = JolpicaEndpoint()
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json?limit=20&offset=40")!
 
         // When
-        let url = sut.racesURL(season: "2023", limit: 20, offset: 40)
+        let url = sut.raceResultsURL(season: "2023", round: "1", limit: 20, offset: 40)
 
         // Then
-        #expect(url == expectedURL)
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/2023/1/results.json?limit=20&offset=40")!)
+    }
+
+    @Test("JolpicaEndpoint should build qualifying results URL with pagination")
+    func testQualifyingResultsURL() {
+        // Given
+        let sut = JolpicaEndpoint()
+
+        // When
+        let url = sut.qualifyingResultsURL(season: "2023", round: "1", limit: 20, offset: 40)
+
+        // Then
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/2023/1/qualifying.json?limit=20&offset=40")!)
+    }
+
+    @Test("JolpicaEndpoint should build driver standings URL with pagination")
+    func testDriverStandingsURL() {
+        // Given
+        let sut = JolpicaEndpoint()
+
+        // When
+        let url = sut.driverStandingsURL(season: "2023", limit: 20, offset: 40)
+
+        // Then
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/2023/driverStandings.json?limit=20&offset=40")!)
+    }
+
+    @Test("JolpicaEndpoint should build constructor standings URL with pagination")
+    func testConstructorStandingsURL() {
+        // Given
+        let sut = JolpicaEndpoint()
+
+        // When
+        let url = sut.constructorStandingsURL(season: "2023", limit: 20, offset: 40)
+
+        // Then
+        #expect(url == URL(string: "https://api.jolpi.ca/ergast/f1/2023/constructorStandings.json?limit=20&offset=40")!)
     }
 }

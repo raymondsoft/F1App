@@ -4,113 +4,120 @@ import Testing
 
 @Suite
 struct JolpicaAPITests {
-    @Test("Seasons should call HTTPClient with the expected seasons URL")
-    func testSeasonsCallsExpectedURL() async throws {
+    @Test("JolpicaAPI should call HTTPClient with expected drivers URL")
+    func testDriversCallsExpectedURL() async throws {
         // Given
-        let seasonsData = try loadJSONFixture(named: "seasons")
-        let httpClientMock = HTTPClientMock(result: .success(seasonsData))
-        let sut = JolpicaAPI(httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json")!
-
-        // When
-        _ = try await sut.seasons()
-
-        // Then
-        #expect(httpClientMock.requestedURLs == [expectedURL])
-    }
-
-    @Test("Races should call HTTPClient with the expected races URL for season")
-    func testRacesCallsExpectedURL() async throws {
-        // Given
-        let racesData = try loadJSONFixture(named: "races_2023")
-        let httpClientMock = HTTPClientMock(result: .success(racesData))
-        let sut = JolpicaAPI(httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json")!
-
-        // When
-        _ = try await sut.races(season: "2023")
-
-        // Then
-        #expect(httpClientMock.requestedURLs == [expectedURL])
-    }
-
-    @Test("Seasons should use custom base URL when calling HTTPClient")
-    func testSeasonsUsesCustomBaseURL() async throws {
-        // Given
-        let seasonsData = try loadJSONFixture(named: "seasons")
-        let httpClientMock = HTTPClientMock(result: .success(seasonsData))
-        let sut = JolpicaAPI(baseURL: URL(string: "https://example.com/proxy")!, httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://example.com/proxy/ergast/f1/seasons.json")!
-
-        // When
-        _ = try await sut.seasons()
-
-        // Then
-        #expect(httpClientMock.requestedURLs == [expectedURL])
-    }
-
-    @Test("Paged seasons should call HTTPClient with limit and offset query parameters")
-    func testPagedSeasonsCallsExpectedURL() async throws {
-        // Given
-        let seasonsData = try loadJSONFixture(named: "seasons")
-        let httpClientMock = HTTPClientMock(result: .success(seasonsData))
-        let sut = JolpicaAPI(httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/seasons.json?limit=20&offset=40")!
-
-        // When
-        _ = try await sut.seasons(limit: 20, offset: 40)
-
-        // Then
-        #expect(httpClientMock.requestedURLs == [expectedURL])
-    }
-
-    @Test("Paged races should call HTTPClient with limit and offset query parameters")
-    func testPagedRacesCallsExpectedURL() async throws {
-        // Given
-        let racesData = try loadJSONFixture(named: "races_2023")
-        let httpClientMock = HTTPClientMock(result: .success(racesData))
-        let sut = JolpicaAPI(httpClient: httpClientMock)
-        let expectedURL = URL(string: "https://api.jolpi.ca/ergast/f1/2023/races.json?limit=20&offset=40")!
-
-        // When
-        _ = try await sut.races(season: "2023", limit: 20, offset: 40)
-
-        // Then
-        #expect(httpClientMock.requestedURLs == [expectedURL])
-    }
-
-    @Test("Seasons should decode SeasonsResponseDTO when HTTPClient returns seasons fixture data")
-    func testSeasonsDecodesFixtureData() async throws {
-        // Given
-        let seasonsData = try loadJSONFixture(named: "seasons")
-        let httpClientMock = HTTPClientMock(result: .success(seasonsData))
+        let data = try loadJSONFixture(named: "drivers_2023")
+        let httpClientMock = HTTPClientMock(result: .success(data))
         let sut = JolpicaAPI(httpClient: httpClientMock)
 
         // When
-        let response = try await sut.seasons()
+        _ = try await sut.drivers(season: "2023", limit: 20, offset: 40)
 
         // Then
-        #expect(response.mrData.seasonTable.seasons.count == 3)
-        #expect(response.mrData.seasonTable.seasons[0].season == "2023")
+        #expect(httpClientMock.requestedURLs == [URL(string: "https://api.jolpi.ca/ergast/f1/2023/drivers.json?limit=20&offset=40")!])
     }
 
-    @Test("Races should decode RacesResponseDTO when HTTPClient returns races fixture data")
-    func testRacesDecodesFixtureData() async throws {
+    @Test("JolpicaAPI should call HTTPClient with expected constructors URL")
+    func testConstructorsCallsExpectedURL() async throws {
         // Given
-        let racesData = try loadJSONFixture(named: "races_2023")
-        let httpClientMock = HTTPClientMock(result: .success(racesData))
+        let data = try loadJSONFixture(named: "constructors_2023")
+        let httpClientMock = HTTPClientMock(result: .success(data))
         let sut = JolpicaAPI(httpClient: httpClientMock)
 
         // When
-        let response = try await sut.races(season: "2023")
+        _ = try await sut.constructors(season: "2023", limit: 20, offset: 40)
 
         // Then
-        #expect(response.mrData.raceTable.season == "2023")
-        #expect(response.mrData.raceTable.races.count == 2)
+        #expect(httpClientMock.requestedURLs == [URL(string: "https://api.jolpi.ca/ergast/f1/2023/constructors.json?limit=20&offset=40")!])
     }
 
-    @Test("Seasons should propagate HTTPClient errors")
-    func testSeasonsPropagatesHTTPClientErrors() async {
+    @Test("JolpicaAPI should call HTTPClient with expected race results URL")
+    func testRaceResultsCallsExpectedURL() async throws {
+        // Given
+        let data = try loadJSONFixture(named: "race_results_2023_round1")
+        let httpClientMock = HTTPClientMock(result: .success(data))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+
+        // When
+        _ = try await sut.raceResults(season: "2023", round: "1", limit: 20, offset: 40)
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [URL(string: "https://api.jolpi.ca/ergast/f1/2023/1/results.json?limit=20&offset=40")!])
+    }
+
+    @Test("JolpicaAPI should call HTTPClient with expected qualifying URL")
+    func testQualifyingCallsExpectedURL() async throws {
+        // Given
+        let data = try loadJSONFixture(named: "qualifying_results_2023_round1")
+        let httpClientMock = HTTPClientMock(result: .success(data))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+
+        // When
+        _ = try await sut.qualifyingResults(season: "2023", round: "1", limit: 20, offset: 40)
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [URL(string: "https://api.jolpi.ca/ergast/f1/2023/1/qualifying.json?limit=20&offset=40")!])
+    }
+
+    @Test("JolpicaAPI should call HTTPClient with expected driver standings URL")
+    func testDriverStandingsCallsExpectedURL() async throws {
+        // Given
+        let data = try loadJSONFixture(named: "driver_standings_2023")
+        let httpClientMock = HTTPClientMock(result: .success(data))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+
+        // When
+        _ = try await sut.driverStandings(season: "2023", limit: 20, offset: 40)
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [URL(string: "https://api.jolpi.ca/ergast/f1/2023/driverStandings.json?limit=20&offset=40")!])
+    }
+
+    @Test("JolpicaAPI should call HTTPClient with expected constructor standings URL")
+    func testConstructorStandingsCallsExpectedURL() async throws {
+        // Given
+        let data = try loadJSONFixture(named: "constructor_standings_2023")
+        let httpClientMock = HTTPClientMock(result: .success(data))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+
+        // When
+        _ = try await sut.constructorStandings(season: "2023", limit: 20, offset: 40)
+
+        // Then
+        #expect(httpClientMock.requestedURLs == [URL(string: "https://api.jolpi.ca/ergast/f1/2023/constructorStandings.json?limit=20&offset=40")!])
+    }
+
+    @Test("JolpicaAPI should decode drivers fixture")
+    func testDriversDecoding() async throws {
+        // Given
+        let data = try loadJSONFixture(named: "drivers_2023")
+        let httpClientMock = HTTPClientMock(result: .success(data))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+
+        // When
+        let response = try await sut.drivers(season: "2023", limit: 2, offset: 0)
+
+        // Then
+        #expect(response.mrData.driverTable.drivers.count == 2)
+    }
+
+    @Test("JolpicaAPI should decode race results fixture")
+    func testRaceResultsDecoding() async throws {
+        // Given
+        let data = try loadJSONFixture(named: "race_results_2023_round1")
+        let httpClientMock = HTTPClientMock(result: .success(data))
+        let sut = JolpicaAPI(httpClient: httpClientMock)
+
+        // When
+        let response = try await sut.raceResults(season: "2023", round: "1", limit: 2, offset: 0)
+
+        // Then
+        #expect(response.mrData.raceTable.races[0].results.count == 2)
+    }
+
+    @Test("JolpicaAPI should propagate HTTP errors for qualifying")
+    func testQualifyingPropagatesHTTPError() async {
         // Given
         let expectedError = DataError.network(underlying: "request failed")
         let httpClientMock = HTTPClientMock(result: .failure(expectedError))
@@ -118,7 +125,7 @@ struct JolpicaAPITests {
 
         // When
         do {
-            _ = try await sut.seasons()
+            _ = try await sut.qualifyingResults(season: "2023", round: "1", limit: 2, offset: 0)
             Issue.record("Expected DataError.network to be thrown")
         } catch let error as DataError {
             // Then
@@ -128,54 +135,15 @@ struct JolpicaAPITests {
         }
     }
 
-    @Test("Seasons should throw decoding error for invalid JSON")
-    func testSeasonsThrowsDecodingErrorForInvalidJSON() async {
+    @Test("JolpicaAPI should throw decoding error for invalid constructor standings JSON")
+    func testConstructorStandingsThrowsDecodingError() async {
         // Given
-        let invalidJSONData = Data("not-json".utf8)
-        let httpClientMock = HTTPClientMock(result: .success(invalidJSONData))
+        let httpClientMock = HTTPClientMock(result: .success(Data("not-json".utf8)))
         let sut = JolpicaAPI(httpClient: httpClientMock)
 
         // When
         do {
-            _ = try await sut.seasons()
-            Issue.record("Expected DecodingError to be thrown")
-        } catch is DecodingError {
-            // Then
-            #expect(Bool(true))
-        } catch {
-            Issue.record("Unexpected error type: \(error)")
-        }
-    }
-
-    @Test("Races should propagate HTTPClient errors")
-    func testRacesPropagatesHTTPClientErrors() async {
-        // Given
-        let expectedError = DataError.network(underlying: "request failed")
-        let httpClientMock = HTTPClientMock(result: .failure(expectedError))
-        let sut = JolpicaAPI(httpClient: httpClientMock)
-
-        // When
-        do {
-            _ = try await sut.races(season: "2023")
-            Issue.record("Expected DataError.network to be thrown")
-        } catch let error as DataError {
-            // Then
-            #expect(error == expectedError)
-        } catch {
-            Issue.record("Unexpected error type: \(error)")
-        }
-    }
-
-    @Test("Races should throw decoding error for invalid JSON")
-    func testRacesThrowsDecodingErrorForInvalidJSON() async {
-        // Given
-        let invalidJSONData = Data("not-json".utf8)
-        let httpClientMock = HTTPClientMock(result: .success(invalidJSONData))
-        let sut = JolpicaAPI(httpClient: httpClientMock)
-
-        // When
-        do {
-            _ = try await sut.races(season: "2023")
+            _ = try await sut.constructorStandings(season: "2023", limit: 2, offset: 0)
             Issue.record("Expected DecodingError to be thrown")
         } catch is DecodingError {
             // Then
