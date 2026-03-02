@@ -186,7 +186,7 @@ public struct SeasonsScreen: View {
                                 getConstructorStandingsPage: getConstructorStandingsPage
                             )
                         } label: {
-                            Label("Constructor Standings", systemImage: "list.number.rectangle")
+                            Label("Constructor Standings", systemImage: "list.number")
                         }
                     }
                     .onAppear {
