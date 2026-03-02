@@ -28,4 +28,22 @@ struct ConstructorStandingTests {
         #expect(firstStanding == secondStanding)
         #expect(standings.count == 1)
     }
+
+    @Test("Constructor standing supports a missing position")
+    func constructorStandingSupportsMissingPosition() {
+        // Given
+        let standing = ConstructorStanding(
+            seasonId: .init(rawValue: "2024"),
+            position: nil,
+            points: 12,
+            wins: 0,
+            constructor: .fixture(id: .init(rawValue: "williams"))
+        )
+
+        // When
+        let position = standing.position
+
+        // Then
+        #expect(position == nil)
+    }
 }

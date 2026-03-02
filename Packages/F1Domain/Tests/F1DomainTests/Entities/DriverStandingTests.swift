@@ -34,4 +34,27 @@ struct DriverStandingTests {
         #expect(firstStanding == secondStanding)
         #expect(standings.count == 1)
     }
+
+    @Test("Driver standing supports a missing position and multiple constructors")
+    func driverStandingSupportsMissingPositionAndMultipleConstructors() {
+        // Given
+        let standing = DriverStanding(
+            seasonId: .init(rawValue: "2024"),
+            position: nil,
+            points: 8,
+            wins: 0,
+            driver: .fixture(id: .init(rawValue: "oliver_bearman")),
+            constructors: [
+                .fixture(id: .init(rawValue: "ferrari")),
+                .fixture(id: .init(rawValue: "haas"))
+            ]
+        )
+
+        // When
+        let values = (standing.position, standing.constructors.map(\.id.rawValue))
+
+        // Then
+        #expect(values.0 == nil)
+        #expect(values.1 == ["ferrari", "haas"])
+    }
 }

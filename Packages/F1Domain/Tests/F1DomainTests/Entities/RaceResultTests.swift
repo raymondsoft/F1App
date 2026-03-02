@@ -47,4 +47,35 @@ struct RaceResultTests {
         #expect(firstResult == secondResult)
         #expect(results.count == 1)
     }
+
+    @Test("Race result supports missing numeric placement fields and terminal time label")
+    func raceResultSupportsMissingNumericPlacementFieldsAndTerminalTimeLabel() {
+        // Given
+        let result = RaceResult(
+            seasonId: .init(rawValue: "2024"),
+            round: .init(rawValue: "5"),
+            raceName: "Miami Grand Prix",
+            date: Date(timeIntervalSince1970: 1_715_008_000),
+            time: nil,
+            driver: .fixture(id: .init(rawValue: "fernando_alonso")),
+            constructor: .fixture(id: .init(rawValue: "aston_martin")),
+            grid: nil,
+            position: nil,
+            positionText: "R",
+            points: 0,
+            laps: nil,
+            status: "Accident",
+            timeOrRetired: "Retired"
+        )
+
+        // When
+        let values = (result.grid, result.position, result.laps, result.time, result.timeOrRetired)
+
+        // Then
+        #expect(values.0 == nil)
+        #expect(values.1 == nil)
+        #expect(values.2 == nil)
+        #expect(values.3 == nil)
+        #expect(values.4 == "Retired")
+    }
 }
