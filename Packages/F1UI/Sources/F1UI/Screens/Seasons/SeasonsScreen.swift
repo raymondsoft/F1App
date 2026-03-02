@@ -6,7 +6,7 @@ public struct SeasonsScreen: View {
     @State private var state: ViewState
 
     private let getSeasonsPage: @Sendable (PageRequest) async throws -> Page<Season>
-    private let getRaces: @Sendable (String) async throws -> [Race]
+    private let getRaces: @Sendable (Season.ID) async throws -> [Race]
     private let pageLimit: Int
 
     public init(
@@ -18,31 +18,7 @@ public struct SeasonsScreen: View {
             try await getSeasonsPageUseCase(request: request)
         }
         self.getRaces = { seasonId in
-            try await getRacesForSeasonUseCase(seasonId: Season.ID(rawValue: seasonId))
-        }
-        self.pageLimit = pageLimit
-        self._state = State(initialValue: .initial)
-    }
-
-    public init(
-        getSeasonsUseCase: GetSeasonsUseCase,
-        getRacesForSeasonUseCase: GetRacesForSeasonUseCase,
-        pageLimit: Int = 30
-    ) {
-        self.getSeasonsPage = { request in
-            let seasons = try await getSeasonsUseCase()
-            let startIndex = min(request.offset, seasons.count)
-            let endIndex = min(startIndex + request.limit, seasons.count)
-
-            return try Page(
-                items: Array(seasons[startIndex..<endIndex]),
-                total: seasons.count,
-                limit: request.limit,
-                offset: request.offset
-            )
-        }
-        self.getRaces = { seasonId in
-            try await getRacesForSeasonUseCase(seasonId: Season.ID(rawValue: seasonId))
+            try await getRacesForSeasonUseCase(seasonId: seasonId)
         }
         self.pageLimit = pageLimit
         self._state = State(initialValue: .initial)
@@ -96,7 +72,7 @@ public struct SeasonsScreen: View {
             List {
                 ForEach(state.items, id: \.id) { season in
                     NavigationLink {
-                        RacesScreen(seasonId: season.id, getRaces: getRaces)
+                        RacesScreen(seasonId: Season.ID(rawValue: season.id), getRaces: getRaces)
                     } label: {
                         F1UI.Season.Row(season)
                     }

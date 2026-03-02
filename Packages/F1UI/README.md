@@ -2,7 +2,7 @@
 
 `F1UI` is the presentation package for the project. It defines how Formula 1 information is represented in SwiftUI and how screens compose application-facing UI from use cases and domain models.
 
-The package currently implements the first slice of this architecture with `F1UI.Season.Row` and `SeasonsScreen`. This document is the reference for the UI patterns already in use.
+The package now contains a broader presentation slice covering seasons, races, circuits, drivers, constructors, results, qualifying results, and standings. This document is the reference for the UI patterns currently in use.
 
 ## UI architecture approach
 
@@ -26,6 +26,11 @@ Examples:
 - `F1UI.Race.Row`
 - `F1UI.Circuit.Row`
 - `F1UI.Season.Row`
+- `F1UI.Driver.Row`
+- `F1UI.Constructor.Row`
+- `F1UI.Result.Row`
+- `F1UI.Qualifying.Row`
+- `F1UI.Standing.Row`
 
 The namespace is built with nested types through Swift extensions:
 
@@ -43,9 +48,16 @@ public extension F1UI.Race {
 
 This keeps UI naming explicit. A domain `Race` remains a domain model, while `F1UI.Race.Row` is a specific visual representation of that concept.
 
-Current example in the package:
+Current component examples in the package:
 
 - `F1UI.Season.Row`
+- `F1UI.Circuit.Row`
+- `F1UI.Race.Row`
+- `F1UI.Driver.Row`
+- `F1UI.Constructor.Row`
+- `F1UI.Result.Row`
+- `F1UI.Qualifying.Row`
+- `F1UI.Standing.Row`
 
 ## UI layer responsibilities
 
@@ -100,7 +112,7 @@ Use the exact name `ViewData`.
 
 ### Screens
 
-Screens are application flow entry points such as `SeasonsScreen` or `RacesScreen`.
+Screens are application flow entry points such as `SeasonsScreen`, `RacesScreen`, or the paged season-detail lists.
 
 Screens are responsible for:
 
@@ -115,25 +127,33 @@ The screen is the place where application state and presentation meet. Component
 
 If a state holder is needed, it is screen-specific rather than a default pattern applied to every view.
 
-Current example in the package:
+Current screen examples in the package:
 
 - `SeasonsScreen`
+- `RacesScreen`
+- `DriversScreen`
+- `ConstructorsScreen`
+- `RaceResultsScreen`
+- `QualifyingResultsScreen`
+- `DriverStandingsScreen`
+- `ConstructorStandingsScreen`
 
 ## Dependency injection in screens
 
 Screens must not store optional runtime dependencies.
 
-Use cases are injected as non-optional async closures owned by the screen. The current `SeasonsScreen` pattern is:
+Use cases are injected as non-optional async closures owned by the screen. The current paged screen pattern is:
 
 ```swift
-private let load: () async throws -> Data
+private let loadPage: @Sendable (PageRequest) async throws -> Page<DomainModel>
 ```
 
-In the concrete screen, the closure wraps the use case:
+Concrete screens wrap their use cases into those closures in the public initializer:
 
-- `private let getSeasons: @Sendable () async throws -> [Season]`
+- `private let getSeasonsPage: @Sendable (PageRequest) async throws -> Page<Season>`
+- `private let getDriversPage: @Sendable (Season.ID, PageRequest) async throws -> Page<Driver>`
 
-This pattern avoids invalid runtime state, makes previews safer, and keeps dependency ownership explicit inside the screen.
+This pattern avoids invalid runtime state, keeps previews safe, and leaves pagination orchestration outside `F1UI`.
 
 ## UI error handling
 
@@ -141,7 +161,7 @@ UI must not expose raw technical errors to the user.
 
 Specifically, screens must not display `error.localizedDescription` directly.
 
-Screens map technical failures into user-friendly messages inside the screen layer. The current `SeasonsScreen` follows this rule by converting any failure into a generic retry message instead of exposing transport or system details.
+Screens map technical failures into user-friendly messages inside the screen layer. The current screens follow this rule by converting failures into generic retry messages instead of exposing transport or system details.
 
 ## Domain to UI mapping policy
 
@@ -159,7 +179,11 @@ It must not happen in:
 
 This keeps the domain model pure, keeps the data layer focused on transport and repository concerns, and allows the UI layer to create multiple visual representations of the same domain type when needed.
 
-In the current implementation, `SeasonsScreen.makeRowData(from:)` maps `Season` into `F1UI.Season.Row.ViewData`.
+Examples in the current implementation:
+
+- `SeasonsScreen.makeRowData(from:)` maps `Season` into `F1UI.Season.Row.ViewData`
+- `RaceResultsScreen.makeRowData(from:)` maps `RaceResult` into `F1UI.Result.Row.ViewData`
+- `DriverStandingsScreen.makeRowData(from:)` maps `DriverStanding` into `F1UI.Standing.Row.ViewData`
 
 ## UI state modeling
 
@@ -172,7 +196,16 @@ The standard state progression is:
 - `loaded`
 - `error`
 
-State should be deterministic and `Equatable` when possible so mapping and error decisions remain easy to test. The current `SeasonsScreen.ViewState` follows this pattern.
+For paged lists, screens may expand this into explicit state fields such as:
+
+- `items`
+- `isLoadingInitial`
+- `isLoadingMore`
+- `hasMore`
+- `nextOffset`
+- `error`
+
+State should remain deterministic and `Equatable` when possible so mapping and error decisions remain easy to test.
 
 ## Package dependency rules
 
@@ -199,9 +232,20 @@ Sources/F1UI/
     Season/
     Race/
     Circuit/
+    Driver/
+    Constructor/
+    Result/
+    Qualifying/
+    Standing/
   Screens/
     Seasons/
     Races/
+    Drivers/
+    Constructors/
+    RaceResults/
+    QualifyingResults/
+    Standings/
+    Shared/
   Formatting/
 ```
 
@@ -217,6 +261,11 @@ This structure is intentionally split by responsibility so reusable views do not
 ## Test structure
 
 `F1UI` tests follow the same responsibility split as production code.
+
+Use:
+
+- `Tests/F1UITests/Components/` for component `ViewData` contracts
+- `Tests/F1UITests/Screens/` for screen mapping and state helpers
 
 - component tests live in `Tests/F1UITests/Components/`
 - screen tests live in `Tests/F1UITests/Screens/`
