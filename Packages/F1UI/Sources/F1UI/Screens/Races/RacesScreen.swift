@@ -6,27 +6,27 @@ import SwiftUI
 public struct RacesScreen: View {
     @State private var state: ViewState
 
-    private let seasonId: String
-    private let getRaces: @Sendable (String) async throws -> [Race]
+    private let seasonId: Season.ID
+    private let getRaces: @Sendable (Season.ID) async throws -> [Race]
 
-    public init(seasonId: String, getRacesForSeasonUseCase: GetRacesForSeasonUseCase) {
+    public init(seasonId: Season.ID, getRacesForSeasonUseCase: GetRacesForSeasonUseCase) {
         self.seasonId = seasonId
         self.getRaces = { selectedSeasonId in
-            try await getRacesForSeasonUseCase(seasonId: Season.ID(rawValue: selectedSeasonId))
+            try await getRacesForSeasonUseCase(seasonId: selectedSeasonId)
         }
         self._state = SwiftUI.State(initialValue: .idle)
     }
 
     init(
-        seasonId: String,
-        getRaces: @escaping @Sendable (String) async throws -> [Race]
+        seasonId: Season.ID,
+        getRaces: @escaping @Sendable (Season.ID) async throws -> [Race]
     ) {
         self.seasonId = seasonId
         self.getRaces = getRaces
         self._state = SwiftUI.State(initialValue: .idle)
     }
 
-    init(seasonId: String, previewState state: ViewState) {
+    init(seasonId: Season.ID, previewState state: ViewState) {
         self.seasonId = seasonId
         self.getRaces = { _ in [] }
         self._state = SwiftUI.State(initialValue: state)
@@ -34,7 +34,7 @@ public struct RacesScreen: View {
 
     public var body: some View {
         content
-            .navigationTitle("\(seasonId) Races")
+            .navigationTitle("\(seasonId.rawValue) Races")
             .task {
                 if case .idle = state {
                     await loadRaces()
@@ -163,14 +163,14 @@ extension RacesScreen {
 
 #Preview("Races Loading") {
     NavigationStack {
-        RacesScreen(seasonId: "2024", previewState: .loading)
+        RacesScreen(seasonId: .init(rawValue: "2024"), previewState: .loading)
     }
 }
 
 #Preview("Races Error") {
     NavigationStack {
         RacesScreen(
-            seasonId: "2024",
+            seasonId: .init(rawValue: "2024"),
             previewState: .error("Failed to load races. Please try again.")
         )
     }
@@ -179,7 +179,7 @@ extension RacesScreen {
 #Preview("Races Loaded") {
     NavigationStack {
         RacesScreen(
-            seasonId: "2024",
+            seasonId: .init(rawValue: "2024"),
             previewState: .loaded([
                 .init(
                     id: "2024-1",
