@@ -14,7 +14,7 @@ public struct RaceResult: Hashable, Sendable {
     public let points: Double
     public let laps: Int?
     public let status: String
-    public let timeOrRetired: String?
+    public let resultTime: RaceResultTime?
 
     public init(
         seasonId: Season.ID,
@@ -30,7 +30,7 @@ public struct RaceResult: Hashable, Sendable {
         points: Double,
         laps: Int?,
         status: String,
-        timeOrRetired: String?
+        resultTime: RaceResultTime?
     ) {
         self.seasonId = seasonId
         self.round = round
@@ -45,6 +45,6 @@ public struct RaceResult: Hashable, Sendable {
         self.points = points
         self.laps = laps
         self.status = status
-        self.timeOrRetired = timeOrRetired
+        self.resultTime = resultTime
     }
 }

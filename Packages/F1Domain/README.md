@@ -12,6 +12,8 @@ It contains stable domain entities, pagination models, and the repository contra
 - `Constructor`
 - `RaceResult`
 - `QualifyingResult`
+- `RaceResultTime`
+- `QualifyingLapTime`
 - `DriverStanding`
 - `ConstructorStanding`
 - `PageRequest`
@@ -31,5 +33,12 @@ The current structure is intentionally small and responsibility-oriented:
 - `Tests/F1DomainTests/Helpers/` holds test-only fixtures.
 
 Other layers interact with `F1Domain` by creating, consuming, or returning these entities, and by conforming to `F1Repository` in implementation packages such as the data layer.
+
+Result timing stays parse-free in Domain:
+
+- `RaceResultTime` makes the difference explicit between a classified race time and a status-like result label.
+- `QualifyingLapTime` stores a qualifying session time as an explicit domain wrapper instead of a raw public `String`.
+
+`F1Repository` exposes both collection methods and paged methods for seasons, races, drivers, constructors, race results, qualifying results, and standings.
 
 The package is meant to stay stable, predictable, and independent. Changes here should preserve clear domain modeling and avoid leaking infrastructure or UI concerns into the core models.

@@ -21,7 +21,7 @@ struct RaceResultTests {
             points: 26,
             laps: 57,
             status: "Finished",
-            timeOrRetired: "1:31:44.742"
+            resultTime: .time("1:31:44.742")
         )
         let secondResult = RaceResult(
             seasonId: .init(rawValue: "2024"),
@@ -37,7 +37,7 @@ struct RaceResultTests {
             points: 26,
             laps: 57,
             status: "Finished",
-            timeOrRetired: "1:31:44.742"
+            resultTime: .time("1:31:44.742")
         )
 
         // When
@@ -65,17 +65,17 @@ struct RaceResultTests {
             points: 0,
             laps: nil,
             status: "Accident",
-            timeOrRetired: "Retired"
+            resultTime: nil
         )
 
         // When
-        let values = (result.grid, result.position, result.laps, result.time, result.timeOrRetired)
+        let values = (result.grid, result.position, result.laps, result.time, result.resultTime)
 
         // Then
         #expect(values.0 == nil)
         #expect(values.1 == nil)
         #expect(values.2 == nil)
         #expect(values.3 == nil)
-        #expect(values.4 == "Retired")
+        #expect(values.4 == nil)
     }
 }

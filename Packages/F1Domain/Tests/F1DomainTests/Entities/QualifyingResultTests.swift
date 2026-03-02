@@ -12,9 +12,9 @@ struct QualifyingResultTests {
             driver: .fixture(id: .init(rawValue: "charles_leclerc")),
             constructor: .fixture(id: .init(rawValue: "ferrari")),
             position: 2,
-            q1: "1:29.165",
-            q2: "1:29.131",
-            q3: "1:29.407"
+            q1: .init(rawValue: "1:29.165"),
+            q2: .init(rawValue: "1:29.131"),
+            q3: .init(rawValue: "1:29.407")
         )
         let secondResult = QualifyingResult(
             seasonId: .init(rawValue: "2024"),
@@ -22,9 +22,9 @@ struct QualifyingResultTests {
             driver: .fixture(id: .init(rawValue: "charles_leclerc")),
             constructor: .fixture(id: .init(rawValue: "ferrari")),
             position: 2,
-            q1: "1:29.165",
-            q2: "1:29.131",
-            q3: "1:29.407"
+            q1: .init(rawValue: "1:29.165"),
+            q2: .init(rawValue: "1:29.131"),
+            q3: .init(rawValue: "1:29.407")
         )
 
         // When
@@ -44,7 +44,7 @@ struct QualifyingResultTests {
             driver: .fixture(id: .init(rawValue: "guanyu_zhou")),
             constructor: .fixture(id: .init(rawValue: "sauber")),
             position: nil,
-            q1: "1:31.234",
+            q1: .init(rawValue: "1:31.234"),
             q2: nil,
             q3: nil
         )
@@ -54,7 +54,7 @@ struct QualifyingResultTests {
 
         // Then
         #expect(values.0 == nil)
-        #expect(values.1 == "1:31.234")
+        #expect(values.1 == .init(rawValue: "1:31.234"))
         #expect(values.2 == nil)
         #expect(values.3 == nil)
     }
