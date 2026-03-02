@@ -1,0 +1,62 @@
+{
+  "MRData": {
+    "xmlns": "http://ergast.com/mrd/1.5",
+    "series": "f1",
+    "url": "https://api.jolpi.ca/ergast/f1/2023/driverStandings.json",
+    "limit": "2",
+    "offset": "0",
+    "total": "22",
+    "StandingsTable": {
+      "season": "2023",
+      "StandingsLists": [
+        {
+          "season": "2023",
+          "DriverStandings": [
+            {
+              "position": "1",
+              "points": "575",
+              "wins": "19",
+              "Driver": {
+                "driverId": "max_verstappen",
+                "url": "https://en.wikipedia.org/wiki/Max_Verstappen",
+                "givenName": "Max",
+                "familyName": "Verstappen",
+                "dateOfBirth": "1997-09-30",
+                "nationality": "Dutch"
+              },
+              "Constructors": [
+                {
+                  "constructorId": "red_bull",
+                  "url": "https://en.wikipedia.org/wiki/Red_Bull_Racing",
+                  "name": "Red Bull",
+                  "nationality": "Austrian"
+                }
+              ]
+            },
+            {
+              "position": "2",
+              "points": "285",
+              "wins": "2",
+              "Driver": {
+                "driverId": "perez",
+                "url": "https://en.wikipedia.org/wiki/Sergio_P%C3%A9rez",
+                "givenName": "Sergio",
+                "familyName": "Perez",
+                "dateOfBirth": "1990-01-26",
+                "nationality": "Mexican"
+              },
+              "Constructors": [
+                {
+                  "constructorId": "red_bull",
+                  "url": "https://en.wikipedia.org/wiki/Red_Bull_Racing",
+                  "name": "Red Bull",
+                  "nationality": "Austrian"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

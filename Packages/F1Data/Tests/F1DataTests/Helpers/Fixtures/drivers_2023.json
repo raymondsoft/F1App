@@ -1,0 +1,31 @@
+{
+  "MRData": {
+    "xmlns": "http://ergast.com/mrd/1.5",
+    "series": "f1",
+    "url": "https://api.jolpi.ca/ergast/f1/2023/drivers.json",
+    "limit": "2",
+    "offset": "0",
+    "total": "24",
+    "DriverTable": {
+      "season": "2023",
+      "Drivers": [
+        {
+          "driverId": "max_verstappen",
+          "url": "https://en.wikipedia.org/wiki/Max_Verstappen",
+          "givenName": "Max",
+          "familyName": "Verstappen",
+          "dateOfBirth": "1997-09-30",
+          "nationality": "Dutch"
+        },
+        {
+          "driverId": "leclerc",
+          "url": "https://en.wikipedia.org/wiki/Charles_Leclerc",
+          "givenName": "Charles",
+          "familyName": "Leclerc",
+          "dateOfBirth": "1997-10-16",
+          "nationality": "Monegasque"
+        }
+      ]
+    }
+  }
+}

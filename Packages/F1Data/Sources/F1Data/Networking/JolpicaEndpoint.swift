@@ -13,11 +13,7 @@ struct JolpicaEndpoint: Sendable {
 
     func seasonsURL(limit: Int?, offset: Int?) -> URL {
         makeURL(
-            pathComponents: [
-                "ergast",
-                "f1",
-                "seasons.json"
-            ],
+            pathComponents: ["ergast", "f1", "seasons.json"],
             limit: limit,
             offset: offset
         )
@@ -29,12 +25,55 @@ struct JolpicaEndpoint: Sendable {
 
     func racesURL(season: String, limit: Int?, offset: Int?) -> URL {
         makeURL(
-            pathComponents: [
-                "ergast",
-                "f1",
-                season,
-                "races.json"
-            ],
+            pathComponents: ["ergast", "f1", season, "races.json"],
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    func driversURL(season: String, limit: Int?, offset: Int?) -> URL {
+        makeURL(
+            pathComponents: ["ergast", "f1", season, "drivers.json"],
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    func constructorsURL(season: String, limit: Int?, offset: Int?) -> URL {
+        makeURL(
+            pathComponents: ["ergast", "f1", season, "constructors.json"],
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    func raceResultsURL(season: String, round: String, limit: Int?, offset: Int?) -> URL {
+        makeURL(
+            pathComponents: ["ergast", "f1", season, round, "results.json"],
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    func qualifyingResultsURL(season: String, round: String, limit: Int?, offset: Int?) -> URL {
+        makeURL(
+            pathComponents: ["ergast", "f1", season, round, "qualifying.json"],
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    func driverStandingsURL(season: String, limit: Int?, offset: Int?) -> URL {
+        makeURL(
+            pathComponents: ["ergast", "f1", season, "driverStandings.json"],
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    func constructorStandingsURL(season: String, limit: Int?, offset: Int?) -> URL {
+        makeURL(
+            pathComponents: ["ergast", "f1", season, "constructorStandings.json"],
             limit: limit,
             offset: offset
         )
