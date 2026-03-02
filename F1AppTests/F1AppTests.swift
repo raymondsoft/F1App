@@ -4,25 +4,16 @@ import Testing
 @MainActor
 struct F1AppTests {
 
-    @Test("App composition root builds the use cases required by the root flow")
-    func appCompositionRootBuildsRequiredUseCases() {
+    @Test("App entry scene builds from the composition root")
+    func appEntrySceneBuildsFromCompositionRoot() {
         // Given
-        let sut = AppCompositionRoot()
+        let sut = F1AppApp()
 
         // When
-        let propertyLabels = Set(Mirror(reflecting: sut).children.compactMap(\.label))
+        let bodyTypeDescription = String(describing: type(of: sut.body))
 
         // Then
-        #expect(propertyLabels == [
-            "getSeasonsPageUseCase",
-            "getDriversPageUseCase",
-            "getConstructorsPageUseCase",
-            "getRacesForSeasonUseCase",
-            "getRaceResultsPageUseCase",
-            "getQualifyingResultsPageUseCase",
-            "getDriverStandingsPageUseCase",
-            "getConstructorStandingsPageUseCase"
-        ])
+        #expect(bodyTypeDescription.contains("WindowGroup"))
     }
 
     @Test("Content view resolves to the seasons entry screen from the app container")

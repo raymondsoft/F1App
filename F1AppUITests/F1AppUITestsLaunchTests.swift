@@ -1,10 +1,3 @@
-//
-//  F1AppUITestsLaunchTests.swift
-//  F1AppUITests
-//
-//  Created by Raymond GUITTONNEAU on 18/02/2026.
-//
-
 import XCTest
 
 final class F1AppUITestsLaunchTests: XCTestCase {
@@ -22,11 +15,13 @@ final class F1AppUITestsLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // Insert steps here to perform after app launch but before taking a screenshot,
-        // such as logging into a test account or navigating somewhere in the app
+        XCTAssertTrue(
+            app.staticTexts["Seasons"].waitForExistence(timeout: 5),
+            "The launch flow should arrive on the seasons entry screen."
+        )
 
         let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Launch Screen"
+        attachment.name = "Seasons Entry Screen"
         attachment.lifetime = .keepAlways
         add(attachment)
     }
