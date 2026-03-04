@@ -36,7 +36,11 @@ struct ConstructorStandingsScreenTests {
                     title: "McLaren",
                     subtitle: "British",
                     pointsText: "666 pts",
-                    winsText: "6 wins"
+                    winsText: "6 wins",
+                    position: 1,
+                    pointsValue: 666,
+                    maxPointsValue: 666,
+                    winsCount: 6
                 )
             ],
             isLoadingInitial: false,
