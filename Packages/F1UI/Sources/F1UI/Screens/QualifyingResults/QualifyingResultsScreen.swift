@@ -99,7 +99,7 @@ public struct QualifyingResultsScreen: View {
     }
 
     private func footerRetryView(error: String) -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: F1Theme.Spacing.s) {
             Text(error)
                 .font(F1Theme.Typography.meta)
                 .foregroundStyle(F1Theme.Colors.textSecondary)
@@ -173,14 +173,18 @@ public struct QualifyingResultsScreen: View {
     }
 
     static func makeRowData(from result: QualifyingResult) -> F1UI.Qualifying.Row.ViewData {
-        .init(
+        let style = TeamStyleRegistry.style(for: result.constructor.id.rawValue)
+        return .init(
             id: "\(result.seasonId.rawValue)-\(result.round.rawValue)-\(result.driver.id.rawValue)",
             positionText: result.position.map(String.init) ?? "-",
+            position: result.position,
             driverName: "\(result.driver.givenName) \(result.driver.familyName)",
             constructorName: result.constructor.name,
             q1Text: result.q1?.rawValue,
             q2Text: result.q2?.rawValue,
-            q3Text: result.q3?.rawValue
+            q3Text: result.q3?.rawValue,
+            teamStyleToken: style?.token,
+            teamShortCode: style?.shortCode
         )
     }
 }
@@ -208,8 +212,8 @@ extension QualifyingResultsScreen {
             round: .init(rawValue: "1"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", q1Text: "1:29.421", q2Text: "1:29.374", q3Text: "1:29.179"),
-                    .init(id: "2024-1-charles_leclerc", positionText: "2", driverName: "Charles Leclerc", constructorName: "Ferrari", q1Text: "1:29.500", q2Text: "1:29.401", q3Text: "1:29.407")
+                    .init(id: "2024-1-max_verstappen", positionText: "1", position: 1, driverName: "Max Verstappen", constructorName: "Red Bull Racing", q1Text: "1:29.421", q2Text: "1:29.374", q3Text: "1:29.179", teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "2024-1-charles_leclerc", positionText: "2", position: 2, driverName: "Charles Leclerc", constructorName: "Ferrari", q1Text: "1:29.500", q2Text: "1:29.401", q3Text: "1:29.407", teamStyleToken: .ferrari, teamShortCode: "FER")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,
@@ -228,8 +232,8 @@ extension QualifyingResultsScreen {
             round: .init(rawValue: "1"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", q1Text: "1:29.421", q2Text: "1:29.374", q3Text: "1:29.179"),
-                    .init(id: "2024-1-charles_leclerc", positionText: "2", driverName: "Charles Leclerc", constructorName: "Ferrari", q1Text: "1:29.500", q2Text: "1:29.401", q3Text: "1:29.407")
+                    .init(id: "2024-1-max_verstappen", positionText: "1", position: 1, driverName: "Max Verstappen", constructorName: "Red Bull Racing", q1Text: "1:29.421", q2Text: "1:29.374", q3Text: "1:29.179", teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "2024-1-charles_leclerc", positionText: "2", position: 2, driverName: "Charles Leclerc", constructorName: "Ferrari", q1Text: "1:29.500", q2Text: "1:29.401", q3Text: "1:29.407", teamStyleToken: .ferrari, teamShortCode: "FER")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: true,
@@ -248,8 +252,8 @@ extension QualifyingResultsScreen {
             round: .init(rawValue: "1"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", q1Text: "1:29.421", q2Text: "1:29.374", q3Text: "1:29.179"),
-                    .init(id: "2024-1-charles_leclerc", positionText: "2", driverName: "Charles Leclerc", constructorName: "Ferrari", q1Text: "1:29.500", q2Text: "1:29.401", q3Text: "1:29.407")
+                    .init(id: "2024-1-max_verstappen", positionText: "1", position: 1, driverName: "Max Verstappen", constructorName: "Red Bull Racing", q1Text: "1:29.421", q2Text: "1:29.374", q3Text: "1:29.179", teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "2024-1-charles_leclerc", positionText: "2", position: 2, driverName: "Charles Leclerc", constructorName: "Ferrari", q1Text: "1:29.500", q2Text: "1:29.401", q3Text: "1:29.407", teamStyleToken: .ferrari, teamShortCode: "FER")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,

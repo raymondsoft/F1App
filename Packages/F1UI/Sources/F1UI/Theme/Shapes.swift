@@ -7,5 +7,8 @@ public extension F1Theme {
         public static let chipCornerRadius: CGFloat = 10
         public static let rowHorizontalPadding: CGFloat = 12
         public static let rowVerticalPadding: CGFloat = 10
+        public static let teamStripeCornerRadius: CGFloat = 2
+        public static let teamStripeWidth: CGFloat = 4
+        public static let teamStripeVerticalInset: CGFloat = 2
     }
 }

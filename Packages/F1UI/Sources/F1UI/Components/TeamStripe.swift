@@ -17,10 +17,10 @@ public extension F1UI {
         }
 
         public var body: some View {
-            RoundedRectangle(cornerRadius: 2, style: .continuous)
+            RoundedRectangle(cornerRadius: F1Theme.Shapes.teamStripeCornerRadius, style: .continuous)
                 .fill(F1Theme.Colors.teamColor(for: viewData.token))
-                .frame(width: 4)
-                .padding(.vertical, 2)
+                .frame(width: F1Theme.Shapes.teamStripeWidth)
+                .padding(.vertical, F1Theme.Shapes.teamStripeVerticalInset)
                 .accessibilityHidden(true)
         }
     }

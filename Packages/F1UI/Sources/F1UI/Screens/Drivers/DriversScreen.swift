@@ -102,7 +102,7 @@ public struct DriversScreen: View {
     }
 
     private func footerRetryView(error: String) -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: F1Theme.Spacing.s) {
             Text(error)
                 .font(F1Theme.Typography.meta)
                 .foregroundStyle(F1Theme.Colors.textSecondary)
