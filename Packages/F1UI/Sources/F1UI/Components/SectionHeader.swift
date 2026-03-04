@@ -47,7 +47,7 @@ public extension F1UI {
     }
 }
 
-#Preview("Section Header") {
+#Preview("Section Header Light") {
     F1UI.SectionHeader(
         .init(
             title: "Driver Standings",
@@ -55,4 +55,18 @@ public extension F1UI {
             trailingText: "575 pts"
         )
     )
+    .preferredColorScheme(.light)
+}
+
+#Preview("Section Header Dark") {
+    F1UI.SectionHeader(
+        .init(
+            title: "Driver Standings",
+            subtitle: "After Round 18",
+            trailingText: "575 pts"
+        )
+    )
+    .padding(.vertical, F1Theme.Spacing.s)
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }

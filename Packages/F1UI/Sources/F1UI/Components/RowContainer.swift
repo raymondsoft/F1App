@@ -35,7 +35,7 @@ public extension F1UI {
     }
 }
 
-#Preview("Row Container") {
+#Preview("Row Container Light") {
     F1UI.RowContainer {
         Image(systemName: "flag.checkered")
             .foregroundStyle(F1Theme.Colors.f1Red)
@@ -53,4 +53,26 @@ public extension F1UI {
     }
     .padding()
     .background(F1Theme.Colors.background)
+    .preferredColorScheme(.light)
+}
+
+#Preview("Row Container Dark") {
+    F1UI.RowContainer {
+        Image(systemName: "flag.checkered")
+            .foregroundStyle(F1Theme.Colors.f1Red)
+    } content: {
+        VStack(alignment: .leading) {
+            Text("Bahrain Grand Prix")
+                .font(F1Theme.Typography.rowTitle)
+            Text("Round 1 • 2024-03-02")
+                .font(F1Theme.Typography.meta)
+                .foregroundStyle(F1Theme.Colors.textSecondary)
+        }
+    } trailing: {
+        Text("25 pts")
+            .font(F1Theme.Typography.number)
+    }
+    .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }

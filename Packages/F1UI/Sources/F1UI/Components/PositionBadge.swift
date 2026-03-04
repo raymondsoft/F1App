@@ -21,7 +21,7 @@ public extension F1UI {
         public var body: some View {
             Text(viewData.text)
                 .font(F1Theme.Typography.number)
-                .foregroundStyle(Color.white)
+                .foregroundStyle(F1Theme.Colors.textOnAccent)
                 .frame(minWidth: 28)
                 .padding(.horizontal, F1Theme.Spacing.s)
                 .padding(.vertical, F1Theme.Spacing.xs)
@@ -36,7 +36,7 @@ public extension F1UI {
             case 2:
                 return F1Theme.Colors.textSecondary.opacity(0.85)
             case 3:
-                return Color(red: 0.63, green: 0.42, blue: 0.30)
+                return F1Theme.Colors.polePurple
             default:
                 return F1Theme.Colors.f1Red
             }
@@ -44,7 +44,7 @@ public extension F1UI {
     }
 }
 
-#Preview("Position Badges") {
+#Preview("Position Badges Light") {
     HStack(spacing: F1Theme.Spacing.s) {
         F1UI.PositionBadge(.init(position: 1, text: "P1"))
         F1UI.PositionBadge(.init(position: 2, text: "P2"))
@@ -52,4 +52,17 @@ public extension F1UI {
         F1UI.PositionBadge(.init(position: 9, text: "P9"))
     }
     .padding()
+    .preferredColorScheme(.light)
+}
+
+#Preview("Position Badges Dark") {
+    HStack(spacing: F1Theme.Spacing.s) {
+        F1UI.PositionBadge(.init(position: 1, text: "P1"))
+        F1UI.PositionBadge(.init(position: 2, text: "P2"))
+        F1UI.PositionBadge(.init(position: 3, text: "P3"))
+        F1UI.PositionBadge(.init(position: 9, text: "P9"))
+    }
+    .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }

@@ -26,7 +26,7 @@ public extension F1UI {
     }
 }
 
-#Preview("Team Stripe") {
+#Preview("Team Stripe Light") {
     HStack(spacing: F1Theme.Spacing.s) {
         F1UI.TeamStripe(.init(token: .ferrari))
             .frame(height: 32)
@@ -36,4 +36,19 @@ public extension F1UI {
             .frame(height: 32)
     }
     .padding()
+    .preferredColorScheme(.light)
+}
+
+#Preview("Team Stripe Dark") {
+    HStack(spacing: F1Theme.Spacing.s) {
+        F1UI.TeamStripe(.init(token: .ferrari))
+            .frame(height: 32)
+        F1UI.TeamStripe(.init(token: .mercedes))
+            .frame(height: 32)
+        F1UI.TeamStripe(.init(token: .redBull))
+            .frame(height: 32)
+    }
+    .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }

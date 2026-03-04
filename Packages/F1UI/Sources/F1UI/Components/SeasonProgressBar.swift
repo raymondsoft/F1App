@@ -35,7 +35,15 @@ public extension F1UI {
     }
 }
 
-#Preview("Season Progress") {
+#Preview("Season Progress Light") {
     F1UI.SeasonProgressBar(.init(completedRounds: 18, totalRounds: 24))
         .padding()
+        .preferredColorScheme(.light)
+}
+
+#Preview("Season Progress Dark") {
+    F1UI.SeasonProgressBar(.init(completedRounds: 18, totalRounds: 24))
+        .padding()
+        .background(F1Theme.Colors.background)
+        .preferredColorScheme(.dark)
 }
