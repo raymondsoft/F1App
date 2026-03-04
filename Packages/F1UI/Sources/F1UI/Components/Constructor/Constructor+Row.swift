@@ -7,17 +7,23 @@ public extension F1UI.Constructor {
             public let name: String
             public let nationality: String
             public let showsWikipediaIndicator: Bool
+            public let teamStyleToken: TeamStyleToken?
+            public let teamShortCode: String?
 
             public init(
                 id: String,
                 name: String,
                 nationality: String,
-                showsWikipediaIndicator: Bool
+                showsWikipediaIndicator: Bool,
+                teamStyleToken: TeamStyleToken? = nil,
+                teamShortCode: String? = nil
             ) {
                 self.id = id
                 self.name = name
                 self.nationality = nationality
                 self.showsWikipediaIndicator = showsWikipediaIndicator
+                self.teamStyleToken = teamStyleToken
+                self.teamShortCode = teamShortCode
             }
         }
 
@@ -28,39 +34,73 @@ public extension F1UI.Constructor {
         }
 
         public var body: some View {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
+            F1UI.RowContainer {
+                if let token = viewData.teamStyleToken {
+                    F1UI.TeamStripe(.init(token: token))
+                        .frame(height: 28)
+                } else {
+                    Image(systemName: "car.rear")
+                        .font(F1Theme.Typography.meta)
+                        .foregroundStyle(F1Theme.Colors.f1Red)
+                }
+            } content: {
+                VStack(alignment: .leading, spacing: F1Theme.Spacing.xs) {
                     Text(viewData.name)
-                        .font(.headline)
+                        .font(F1Theme.Typography.rowTitle)
+                        .foregroundStyle(F1Theme.Colors.textPrimary)
 
                     Text(viewData.nationality)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(F1Theme.Typography.rowSubtitle)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
                 }
-
-                Spacer(minLength: 0)
-
+            } trailing: {
+                VStack(alignment: .trailing, spacing: F1Theme.Spacing.xs) {
+                    if let shortCode = viewData.teamShortCode {
+                        Text(shortCode)
+                            .font(F1Theme.Typography.timing)
+                            .foregroundStyle(F1Theme.Colors.textSecondary)
+                    }
                 if viewData.showsWikipediaIndicator {
                     Label("Wikipedia", systemImage: "link")
-                        .font(.caption.weight(.semibold))
+                        .font(F1Theme.Typography.meta.weight(.semibold))
                         .labelStyle(.iconOnly)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
                         .accessibilityLabel("Wikipedia available")
                 }
             }
-            .padding(.vertical, 4)
+            }
         }
     }
 }
 
-#Preview("Constructor Row") {
+#Preview("Constructor Row Light") {
     F1UI.Constructor.Row(
         .init(
             id: "red_bull",
             name: "Red Bull Racing",
             nationality: "Austrian",
-            showsWikipediaIndicator: true
+            showsWikipediaIndicator: true,
+            teamStyleToken: .redBull,
+            teamShortCode: "RBR"
         )
     )
     .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.light)
+}
+
+#Preview("Constructor Row Dark") {
+    F1UI.Constructor.Row(
+        .init(
+            id: "red_bull",
+            name: "Red Bull Racing",
+            nationality: "Austrian",
+            showsWikipediaIndicator: true,
+            teamStyleToken: .redBull,
+            teamShortCode: "RBR"
+        )
+    )
+    .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }

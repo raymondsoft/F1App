@@ -34,30 +34,36 @@ public extension F1UI.Race {
         }
 
         public var body: some View {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(viewData.title)
-                    .font(.headline)
+            F1UI.RowContainer {
+                Image(systemName: "flag.checkered")
+                    .font(F1Theme.Typography.meta)
+                    .foregroundStyle(F1Theme.Colors.f1Red)
+            } content: {
+                VStack(alignment: .leading, spacing: F1Theme.Spacing.xs) {
+                    Text(viewData.title)
+                        .font(F1Theme.Typography.rowTitle)
+                        .foregroundStyle(F1Theme.Colors.textPrimary)
 
-                Text(metaText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                F1UI.Circuit.Row(viewData.circuit)
+                    Text("\(viewData.circuit.locality), \(viewData.circuit.country)")
+                        .font(F1Theme.Typography.rowSubtitle)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
+                }
+            } trailing: {
+                VStack(alignment: .trailing, spacing: F1Theme.Spacing.xs) {
+                    F1UI.Chip(.init(text: viewData.roundText, style: .neutral))
+                    F1UI.Chip(.init(text: timingText, style: viewData.timeText == nil ? .neutral : .time))
+                }
             }
-            .padding(.vertical, 4)
         }
 
-        private var metaText: String {
-            if let timeText = viewData.timeText {
-                "\(viewData.roundText) • \(viewData.dateText) • \(timeText)"
-            } else {
-                "\(viewData.roundText) • \(viewData.dateText)"
-            }
+        private var timingText: String {
+            if let timeText = viewData.timeText { return "\(viewData.dateText) \(timeText)" }
+            return viewData.dateText
         }
     }
 }
 
-#Preview("Race Row With Time") {
+#Preview("Race Row With Time Light") {
     F1UI.Race.Row(
         .init(
             id: "2024-1",
@@ -75,6 +81,30 @@ public extension F1UI.Race {
         )
     )
     .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.light)
+}
+
+#Preview("Race Row With Time Dark") {
+    F1UI.Race.Row(
+        .init(
+            id: "2024-1",
+            roundText: "Round 1",
+            title: "Bahrain Grand Prix",
+            dateText: "2024-03-02",
+            timeText: "15:00:00",
+            circuit: .init(
+                id: "bahrain",
+                name: "Bahrain International Circuit",
+                locality: "Sakhir",
+                country: "Bahrain",
+                showsWikipediaIndicator: true
+            )
+        )
+    )
+    .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }
 
 #Preview("Race Row Without Time") {

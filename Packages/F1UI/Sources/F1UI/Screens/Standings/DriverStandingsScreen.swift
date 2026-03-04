@@ -82,6 +82,8 @@ public struct DriverStandingsScreen: View {
                     footerRetryView(error: error)
                 }
             }
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.isLoadingMore)
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.error)
         }
     }
 
@@ -91,7 +93,9 @@ public struct DriverStandingsScreen: View {
 
     private func footerRetryView(error: String) -> some View {
         VStack(spacing: 8) {
-            Text(error).font(.footnote).foregroundStyle(.secondary)
+            Text(error)
+                .font(F1Theme.Typography.meta)
+                .foregroundStyle(F1Theme.Colors.textSecondary)
             Button("Retry") { Task { await loadNextPage() } }
         }
         .frame(maxWidth: .infinity)

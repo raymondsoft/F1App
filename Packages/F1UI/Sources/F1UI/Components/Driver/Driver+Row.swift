@@ -28,32 +28,34 @@ public extension F1UI.Driver {
         }
 
         public var body: some View {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
+            F1UI.RowContainer {
+                Image(systemName: "person.fill")
+                    .font(F1Theme.Typography.meta)
+                    .foregroundStyle(F1Theme.Colors.f1Red)
+            } content: {
+                VStack(alignment: .leading, spacing: F1Theme.Spacing.xs) {
                     Text(viewData.name)
-                        .font(.headline)
+                        .font(F1Theme.Typography.rowTitle)
+                        .foregroundStyle(F1Theme.Colors.textPrimary)
 
                     Text(viewData.nationality)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(F1Theme.Typography.rowSubtitle)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
                 }
-
-                Spacer(minLength: 0)
-
+            } trailing: {
                 if viewData.showsWikipediaIndicator {
                     Label("Wikipedia", systemImage: "link")
-                        .font(.caption.weight(.semibold))
+                        .font(F1Theme.Typography.meta.weight(.semibold))
                         .labelStyle(.iconOnly)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
                         .accessibilityLabel("Wikipedia available")
                 }
             }
-            .padding(.vertical, 4)
         }
     }
 }
 
-#Preview("Driver Row") {
+#Preview("Driver Row Light") {
     F1UI.Driver.Row(
         .init(
             id: "max_verstappen",
@@ -63,4 +65,20 @@ public extension F1UI.Driver {
         )
     )
     .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.light)
+}
+
+#Preview("Driver Row Dark") {
+    F1UI.Driver.Row(
+        .init(
+            id: "max_verstappen",
+            name: "Max Verstappen",
+            nationality: "Dutch",
+            showsWikipediaIndicator: true
+        )
+    )
+    .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }

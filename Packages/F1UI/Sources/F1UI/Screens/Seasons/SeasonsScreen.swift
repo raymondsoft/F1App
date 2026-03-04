@@ -202,6 +202,8 @@ public struct SeasonsScreen: View {
                     footerRetryView(error: error)
                 }
             }
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.isLoadingMore)
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.error)
         }
     }
 
@@ -220,8 +222,8 @@ public struct SeasonsScreen: View {
     private func footerRetryView(error: String) -> some View {
         VStack(spacing: 8) {
             Text(error)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .font(F1Theme.Typography.meta)
+                .foregroundStyle(F1Theme.Colors.textSecondary)
 
             Button("Retry") {
                 Task {

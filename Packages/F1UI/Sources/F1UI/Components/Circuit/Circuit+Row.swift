@@ -31,33 +31,35 @@ public extension F1UI.Circuit {
         }
 
         public var body: some View {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
+            F1UI.RowContainer {
+                Image(systemName: "map")
+                    .font(F1Theme.Typography.meta)
+                    .foregroundStyle(F1Theme.Colors.f1Red)
+            } content: {
+                VStack(alignment: .leading, spacing: F1Theme.Spacing.xs) {
                     Text(viewData.name)
-                        .font(.headline)
+                        .font(F1Theme.Typography.rowTitle)
+                        .foregroundStyle(F1Theme.Colors.textPrimary)
 
                     Text("\(viewData.locality), \(viewData.country)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(F1Theme.Typography.rowSubtitle)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
                         .accessibilityLabel("\(viewData.locality), \(viewData.country)")
                 }
-
-                Spacer(minLength: 0)
-
+            } trailing: {
                 if viewData.showsWikipediaIndicator {
                     Label("Wikipedia", systemImage: "link")
-                        .font(.caption.weight(.semibold))
+                        .font(F1Theme.Typography.meta.weight(.semibold))
                         .labelStyle(.iconOnly)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
                         .accessibilityLabel("Wikipedia available")
                 }
             }
-            .padding(.vertical, 4)
         }
     }
 }
 
-#Preview("Circuit Row") {
+#Preview("Circuit Row Light") {
     F1UI.Circuit.Row(
         .init(
             id: "silverstone",
@@ -68,9 +70,11 @@ public extension F1UI.Circuit {
         )
     )
     .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.light)
 }
 
-#Preview("Circuit Row Without Wikipedia") {
+#Preview("Circuit Row Dark") {
     F1UI.Circuit.Row(
         .init(
             id: "monaco",
@@ -81,4 +85,6 @@ public extension F1UI.Circuit {
         )
     )
     .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }

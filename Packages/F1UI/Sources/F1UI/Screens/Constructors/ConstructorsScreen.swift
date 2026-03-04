@@ -82,6 +82,8 @@ public struct ConstructorsScreen: View {
                     footerRetryView(error: error)
                 }
             }
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.isLoadingMore)
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.error)
         }
     }
 
@@ -96,8 +98,8 @@ public struct ConstructorsScreen: View {
     private func footerRetryView(error: String) -> some View {
         VStack(spacing: 8) {
             Text(error)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .font(F1Theme.Typography.meta)
+                .foregroundStyle(F1Theme.Colors.textSecondary)
             Button("Retry") { Task { await loadNextPage() } }
         }
         .frame(maxWidth: .infinity)
@@ -174,11 +176,14 @@ public struct ConstructorsScreen: View {
     }
 
     static func makeRowData(from constructor: Constructor) -> F1UI.Constructor.Row.ViewData {
-        .init(
+        let style = TeamStyleRegistry.style(for: constructor.id.rawValue)
+        return .init(
             id: constructor.id.rawValue,
             name: constructor.name,
             nationality: constructor.nationality,
-            showsWikipediaIndicator: constructor.wikipediaURL != nil
+            showsWikipediaIndicator: constructor.wikipediaURL != nil,
+            teamStyleToken: style?.token,
+            teamShortCode: style?.shortCode
         )
     }
 }
@@ -205,8 +210,8 @@ extension ConstructorsScreen {
             seasonId: .init(rawValue: "2024"),
             previewState: .init(
                 items: [
-                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true),
-                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true)
+                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true, teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true, teamStyleToken: .mclaren, teamShortCode: "MCL")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,
@@ -224,8 +229,8 @@ extension ConstructorsScreen {
             seasonId: .init(rawValue: "2024"),
             previewState: .init(
                 items: [
-                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true),
-                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true)
+                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true, teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true, teamStyleToken: .mclaren, teamShortCode: "MCL")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: true,
@@ -243,8 +248,8 @@ extension ConstructorsScreen {
             seasonId: .init(rawValue: "2024"),
             previewState: .init(
                 items: [
-                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true),
-                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true)
+                    .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true, teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: true, teamStyleToken: .mclaren, teamShortCode: "MCL")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,
