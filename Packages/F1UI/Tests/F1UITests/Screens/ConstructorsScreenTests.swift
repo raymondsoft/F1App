@@ -30,8 +30,8 @@ struct ConstructorsScreenTests {
         )
         let expectedState = ConstructorsScreen.ViewState(
             items: [
-                .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true),
-                .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: false)
+                .init(id: "red_bull", name: "Red Bull Racing", nationality: "Austrian", showsWikipediaIndicator: true, teamStyleToken: .redBull, teamShortCode: "RBR"),
+                .init(id: "mclaren", name: "McLaren", nationality: "British", showsWikipediaIndicator: false, teamStyleToken: .mclaren, teamShortCode: "MCL")
             ],
             isLoadingInitial: false,
             isLoadingMore: false,
