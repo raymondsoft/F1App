@@ -139,8 +139,16 @@ public struct ConstructorStandingsScreen: View {
         from page: Page<ConstructorStanding>,
         existingItems: [F1UI.Standing.Row.ViewData] = []
     ) -> ViewState {
-        .init(
-            items: mergeUniqueByID(existingItems, with: page.items.map(Self.makeRowData), id: \.id),
+        let existingMaxPoints: Double = existingItems.compactMap { $0.pointsValue }.max() ?? 0
+        let pageMaxPoints: Double = page.items.map { $0.points }.max() ?? 0
+        let maxPointsValue = max(existingMaxPoints, pageMaxPoints)
+
+        return .init(
+            items: mergeUniqueByID(
+                existingItems,
+                with: page.items.map { Self.makeRowData(from: $0, maxPointsValue: maxPointsValue) },
+                id: \.id
+            ),
             isLoadingInitial: false,
             isLoadingMore: false,
             hasMore: page.hasMore,
@@ -161,14 +169,21 @@ public struct ConstructorStandingsScreen: View {
         .init(items: state.items, isLoadingInitial: false, isLoadingMore: false, hasMore: state.hasMore, nextOffset: state.nextOffset, error: "Failed to load constructor standings. Please try again.")
     }
 
-    static func makeRowData(from standing: ConstructorStanding) -> F1UI.Standing.Row.ViewData {
+    static func makeRowData(
+        from standing: ConstructorStanding,
+        maxPointsValue: Double
+    ) -> F1UI.Standing.Row.ViewData {
         .init(
             id: "\(standing.seasonId.rawValue)-\(standing.constructor.id.rawValue)",
             positionText: standing.position.map(String.init) ?? "-",
             title: standing.constructor.name,
             subtitle: standing.constructor.nationality,
             pointsText: "\(formatPoints(standing.points)) pts",
-            winsText: "\(standing.wins) wins"
+            winsText: "\(standing.wins) wins",
+            position: standing.position,
+            pointsValue: standing.points,
+            maxPointsValue: maxPointsValue,
+            winsCount: standing.wins
         )
     }
 
@@ -202,8 +217,8 @@ extension ConstructorStandingsScreen {
             seasonId: .init(rawValue: "2024"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-mclaren", positionText: "1", title: "McLaren", subtitle: "British", pointsText: "666 pts", winsText: "6 wins"),
-                    .init(id: "2024-ferrari", positionText: "2", title: "Ferrari", subtitle: "Italian", pointsText: "652 pts", winsText: "5 wins")
+                    .init(id: "2024-mclaren", positionText: "1", title: "McLaren", subtitle: "British", pointsText: "666 pts", winsText: "6 wins", position: 1, pointsValue: 666, maxPointsValue: 666, winsCount: 6),
+                    .init(id: "2024-ferrari", positionText: "2", title: "Ferrari", subtitle: "Italian", pointsText: "652 pts", winsText: "5 wins", position: 2, pointsValue: 652, maxPointsValue: 666, winsCount: 5)
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,
@@ -221,8 +236,8 @@ extension ConstructorStandingsScreen {
             seasonId: .init(rawValue: "2024"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-mclaren", positionText: "1", title: "McLaren", subtitle: "British", pointsText: "666 pts", winsText: "6 wins"),
-                    .init(id: "2024-ferrari", positionText: "2", title: "Ferrari", subtitle: "Italian", pointsText: "652 pts", winsText: "5 wins")
+                    .init(id: "2024-mclaren", positionText: "1", title: "McLaren", subtitle: "British", pointsText: "666 pts", winsText: "6 wins", position: 1, pointsValue: 666, maxPointsValue: 666, winsCount: 6),
+                    .init(id: "2024-ferrari", positionText: "2", title: "Ferrari", subtitle: "Italian", pointsText: "652 pts", winsText: "5 wins", position: 2, pointsValue: 652, maxPointsValue: 666, winsCount: 5)
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: true,
