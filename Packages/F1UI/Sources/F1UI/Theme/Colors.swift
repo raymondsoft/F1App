@@ -1,12 +1,45 @@
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 public extension F1Theme {
     enum Colors {
-        public static let background = Color(red: 0.96, green: 0.97, blue: 0.98)
-        public static let groupedBackground = Color.white
-        public static let separator = Color.black.opacity(0.08)
+        public static let background: Color = {
+            #if canImport(UIKit)
+            Color(uiColor: .systemGroupedBackground)
+            #elseif canImport(AppKit)
+            Color(nsColor: .windowBackgroundColor)
+            #else
+            Color(red: 0.96, green: 0.97, blue: 0.98)
+            #endif
+        }()
+
+        public static let groupedBackground: Color = {
+            #if canImport(UIKit)
+            Color(uiColor: .secondarySystemGroupedBackground)
+            #elseif canImport(AppKit)
+            Color(nsColor: .underPageBackgroundColor)
+            #else
+            Color.white
+            #endif
+        }()
+
+        public static let separator: Color = {
+            #if canImport(UIKit)
+            Color(uiColor: .separator)
+            #elseif canImport(AppKit)
+            Color(nsColor: .separatorColor)
+            #else
+            Color.gray.opacity(0.2)
+            #endif
+        }()
+
         public static let textPrimary = Color.primary
         public static let textSecondary = Color.secondary
+        public static let textOnAccent = Color.white
 
         public static let f1Red = Color(red: 0.88, green: 0.07, blue: 0.19)
         public static let polePurple = Color(red: 0.42, green: 0.25, blue: 0.73)
