@@ -10,10 +10,13 @@ struct ResultRowTests {
         let viewData = F1UI.Result.Row.ViewData(
             id: "2024-1-max_verstappen",
             positionText: "1",
+            position: 1,
             driverName: "Max Verstappen",
             constructorName: "Red Bull Racing",
             pointsText: "25 pts",
-            resultText: "1:31:44.742"
+            resultChip: .init(text: "1:31:44.742", style: .time),
+            teamStyleToken: .redBull,
+            teamShortCode: "RBR"
         )
 
         // When
@@ -25,6 +28,8 @@ struct ResultRowTests {
         #expect(viewData.driverName == "Max Verstappen")
         #expect(viewData.constructorName == "Red Bull Racing")
         #expect(viewData.pointsText == "25 pts")
-        #expect(viewData.resultText == "1:31:44.742")
+        #expect(viewData.resultChip == .init(text: "1:31:44.742", style: .time))
+        #expect(viewData.teamStyleToken == .redBull)
+        #expect(viewData.teamShortCode == "RBR")
     }
 }

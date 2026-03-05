@@ -82,6 +82,8 @@ public struct DriverStandingsScreen: View {
                     footerRetryView(error: error)
                 }
             }
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.isLoadingMore)
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.error)
         }
     }
 
@@ -90,8 +92,10 @@ public struct DriverStandingsScreen: View {
     }
 
     private func footerRetryView(error: String) -> some View {
-        VStack(spacing: 8) {
-            Text(error).font(.footnote).foregroundStyle(.secondary)
+        VStack(spacing: F1Theme.Spacing.s) {
+            Text(error)
+                .font(F1Theme.Typography.meta)
+                .foregroundStyle(F1Theme.Colors.textSecondary)
             Button("Retry") { Task { await loadNextPage() } }
         }
         .frame(maxWidth: .infinity)
@@ -139,8 +143,16 @@ public struct DriverStandingsScreen: View {
         from page: Page<DriverStanding>,
         existingItems: [F1UI.Standing.Row.ViewData] = []
     ) -> ViewState {
-        .init(
-            items: mergeUniqueByID(existingItems, with: page.items.map(Self.makeRowData), id: \.id),
+        let existingMaxPoints: Double = existingItems.compactMap { $0.pointsValue }.max() ?? 0
+        let pageMaxPoints: Double = page.items.map { $0.points }.max() ?? 0
+        let maxPointsValue = max(existingMaxPoints, pageMaxPoints)
+
+        return .init(
+            items: mergeUniqueByID(
+                existingItems,
+                with: page.items.map { Self.makeRowData(from: $0, maxPointsValue: maxPointsValue) },
+                id: \.id
+            ),
             isLoadingInitial: false,
             isLoadingMore: false,
             hasMore: page.hasMore,
@@ -161,14 +173,21 @@ public struct DriverStandingsScreen: View {
         .init(items: state.items, isLoadingInitial: false, isLoadingMore: false, hasMore: state.hasMore, nextOffset: state.nextOffset, error: "Failed to load driver standings. Please try again.")
     }
 
-    static func makeRowData(from standing: DriverStanding) -> F1UI.Standing.Row.ViewData {
+    static func makeRowData(
+        from standing: DriverStanding,
+        maxPointsValue: Double
+    ) -> F1UI.Standing.Row.ViewData {
         .init(
             id: "\(standing.seasonId.rawValue)-\(standing.driver.id.rawValue)",
             positionText: standing.position.map(String.init) ?? "-",
             title: "\(standing.driver.givenName) \(standing.driver.familyName)",
             subtitle: standing.constructors.map(\.name).joined(separator: ", "),
             pointsText: "\(formatPoints(standing.points)) pts",
-            winsText: "\(standing.wins) wins"
+            winsText: "\(standing.wins) wins",
+            position: standing.position,
+            pointsValue: standing.points,
+            maxPointsValue: maxPointsValue,
+            winsCount: standing.wins
         )
     }
 
@@ -202,8 +221,8 @@ extension DriverStandingsScreen {
             seasonId: .init(rawValue: "2024"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-max_verstappen", positionText: "1", title: "Max Verstappen", subtitle: "Red Bull Racing", pointsText: "575 pts", winsText: "9 wins"),
-                    .init(id: "2024-lando_norris", positionText: "2", title: "Lando Norris", subtitle: "McLaren", pointsText: "374 pts", winsText: "3 wins")
+                    .init(id: "2024-max_verstappen", positionText: "1", title: "Max Verstappen", subtitle: "Red Bull Racing", pointsText: "575 pts", winsText: "9 wins", position: 1, pointsValue: 575, maxPointsValue: 575, winsCount: 9),
+                    .init(id: "2024-lando_norris", positionText: "2", title: "Lando Norris", subtitle: "McLaren", pointsText: "374 pts", winsText: "3 wins", position: 2, pointsValue: 374, maxPointsValue: 575, winsCount: 3)
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,
@@ -221,8 +240,8 @@ extension DriverStandingsScreen {
             seasonId: .init(rawValue: "2024"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-max_verstappen", positionText: "1", title: "Max Verstappen", subtitle: "Red Bull Racing", pointsText: "575 pts", winsText: "9 wins"),
-                    .init(id: "2024-lando_norris", positionText: "2", title: "Lando Norris", subtitle: "McLaren", pointsText: "374 pts", winsText: "3 wins")
+                    .init(id: "2024-max_verstappen", positionText: "1", title: "Max Verstappen", subtitle: "Red Bull Racing", pointsText: "575 pts", winsText: "9 wins", position: 1, pointsValue: 575, maxPointsValue: 575, winsCount: 9),
+                    .init(id: "2024-lando_norris", positionText: "2", title: "Lando Norris", subtitle: "McLaren", pointsText: "374 pts", winsText: "3 wins", position: 2, pointsValue: 374, maxPointsValue: 575, winsCount: 3)
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: true,

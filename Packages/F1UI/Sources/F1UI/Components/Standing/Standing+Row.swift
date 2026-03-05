@@ -9,6 +9,10 @@ public extension F1UI.Standing {
             public let subtitle: String?
             public let pointsText: String
             public let winsText: String
+            public let position: Int?
+            public let pointsValue: Double?
+            public let maxPointsValue: Double?
+            public let winsCount: Int?
 
             public init(
                 id: String,
@@ -16,7 +20,11 @@ public extension F1UI.Standing {
                 title: String,
                 subtitle: String?,
                 pointsText: String,
-                winsText: String
+                winsText: String,
+                position: Int? = nil,
+                pointsValue: Double? = nil,
+                maxPointsValue: Double? = nil,
+                winsCount: Int? = nil
             ) {
                 self.id = id
                 self.positionText = positionText
@@ -24,6 +32,10 @@ public extension F1UI.Standing {
                 self.subtitle = subtitle
                 self.pointsText = pointsText
                 self.winsText = winsText
+                self.position = position
+                self.pointsValue = pointsValue
+                self.maxPointsValue = maxPointsValue
+                self.winsCount = winsCount
             }
         }
 
@@ -34,34 +46,53 @@ public extension F1UI.Standing {
         }
 
         public var body: some View {
-            HStack(alignment: .top, spacing: 12) {
-                Text(viewData.positionText)
-                    .font(.headline)
-                    .frame(minWidth: 28, alignment: .leading)
-
-                VStack(alignment: .leading, spacing: 2) {
+            F1UI.RowContainer {
+                F1UI.PositionBadge(
+                    .init(
+                        position: viewData.position,
+                        text: "P\(viewData.positionText)"
+                    )
+                )
+            } content: {
+                VStack(alignment: .leading, spacing: F1Theme.Spacing.xs) {
                     Text(viewData.title)
-                        .font(.headline)
+                        .font(F1Theme.Typography.rowTitle)
+                        .foregroundStyle(F1Theme.Colors.textPrimary)
 
-                    if let subtitle = viewData.subtitle {
+                    if let subtitle = viewData.subtitle, !subtitle.isEmpty {
                         Text(subtitle)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .font(F1Theme.Typography.rowSubtitle)
+                            .foregroundStyle(F1Theme.Colors.textSecondary)
                     }
                 }
-
-                Spacer(minLength: 0)
-
-                VStack(alignment: .trailing, spacing: 2) {
+            } trailing: {
+                VStack(alignment: .trailing, spacing: F1Theme.Spacing.xs) {
                     Text(viewData.pointsText)
-                        .font(.subheadline.weight(.semibold))
+                        .font(F1Theme.Typography.number)
+                        .foregroundStyle(F1Theme.Colors.textPrimary)
 
-                    Text(viewData.winsText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    if
+                        let pointsValue = viewData.pointsValue,
+                        let maxPointsValue = viewData.maxPointsValue
+                    {
+                        F1UI.PointsBar(
+                            .init(
+                                value: pointsValue,
+                                maxValue: max(maxPointsValue, pointsValue)
+                            )
+                        )
+                        .frame(width: 80)
+                    }
+
+                    if let winsCount = viewData.winsCount {
+                        F1UI.WinsPips(.init(wins: winsCount, maxVisible: 8))
+                    } else {
+                        Text(viewData.winsText)
+                            .font(F1Theme.Typography.meta)
+                            .foregroundStyle(F1Theme.Colors.textSecondary)
+                    }
                 }
             }
-            .padding(.vertical, 4)
         }
     }
 }
@@ -74,8 +105,13 @@ public extension F1UI.Standing {
             title: "Max Verstappen",
             subtitle: "Red Bull Racing",
             pointsText: "575 pts",
-            winsText: "9 wins"
+            winsText: "9 wins",
+            position: 1,
+            pointsValue: 575,
+            maxPointsValue: 700,
+            winsCount: 9
         )
     )
     .padding()
+    .background(F1Theme.Colors.background)
 }

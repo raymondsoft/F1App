@@ -10,11 +10,14 @@ struct QualifyingRowTests {
         let viewData = F1UI.Qualifying.Row.ViewData(
             id: "2024-1-max_verstappen",
             positionText: "1",
+            position: 1,
             driverName: "Max Verstappen",
             constructorName: "Red Bull Racing",
             q1Text: "1:29.421",
             q2Text: "1:29.374",
-            q3Text: "1:29.179"
+            q3Text: "1:29.179",
+            teamStyleToken: .redBull,
+            teamShortCode: "RBR"
         )
 
         // When
@@ -28,5 +31,8 @@ struct QualifyingRowTests {
         #expect(viewData.q1Text == "1:29.421")
         #expect(viewData.q2Text == "1:29.374")
         #expect(viewData.q3Text == "1:29.179")
+        #expect(viewData.position == 1)
+        #expect(viewData.teamStyleToken == .redBull)
+        #expect(viewData.teamShortCode == "RBR")
     }
 }

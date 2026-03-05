@@ -43,11 +43,14 @@ struct QualifyingResultsScreenTests {
                 .init(
                     id: "2024-1-charles_leclerc",
                     positionText: "2",
+                    position: 2,
                     driverName: "Charles Leclerc",
                     constructorName: "Ferrari",
                     q1Text: "1:29.500",
                     q2Text: "1:29.401",
-                    q3Text: "1:29.407"
+                    q3Text: "1:29.407",
+                    teamStyleToken: .ferrari,
+                    teamShortCode: "FER"
                 )
             ],
             isLoadingInitial: false,
@@ -72,11 +75,14 @@ struct QualifyingResultsScreenTests {
                 .init(
                     id: "2024-1-charles_leclerc",
                     positionText: "2",
+                    position: 2,
                     driverName: "Charles Leclerc",
                     constructorName: "Ferrari",
                     q1Text: "1:29.500",
                     q2Text: "1:29.401",
-                    q3Text: "1:29.407"
+                    q3Text: "1:29.407",
+                    teamStyleToken: .ferrari,
+                    teamShortCode: "FER"
                 )
             ],
             isLoadingInitial: false,
@@ -98,11 +104,14 @@ struct QualifyingResultsScreenTests {
                 .init(
                     id: "2024-1-charles_leclerc",
                     positionText: "2",
+                    position: 2,
                     driverName: "Charles Leclerc",
                     constructorName: "Ferrari",
                     q1Text: "1:29.500",
                     q2Text: "1:29.401",
-                    q3Text: "1:29.407"
+                    q3Text: "1:29.407",
+                    teamStyleToken: .ferrari,
+                    teamShortCode: "FER"
                 )
             ],
             isLoadingInitial: false,

@@ -46,7 +46,11 @@ struct DriverStandingsScreenTests {
                     title: "Max Verstappen",
                     subtitle: "Red Bull Racing",
                     pointsText: "575 pts",
-                    winsText: "9 wins"
+                    winsText: "9 wins",
+                    position: 1,
+                    pointsValue: 575,
+                    maxPointsValue: 575,
+                    winsCount: 9
                 )
             ],
             isLoadingInitial: false,

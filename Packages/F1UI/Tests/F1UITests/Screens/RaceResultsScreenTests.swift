@@ -49,10 +49,13 @@ struct RaceResultsScreenTests {
                 .init(
                     id: "2024-1-max_verstappen",
                     positionText: "1",
+                    position: 1,
                     driverName: "Max Verstappen",
                     constructorName: "Red Bull Racing",
                     pointsText: "25 pts",
-                    resultText: "1:31:44.742"
+                    resultChip: .init(text: "1:31:44.742", style: .time),
+                    teamStyleToken: .redBull,
+                    teamShortCode: "RBR"
                 )
             ],
             isLoadingInitial: false,

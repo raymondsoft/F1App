@@ -21,21 +21,23 @@ public extension F1UI.Season {
         }
 
         public var body: some View {
-            HStack(spacing: 12) {
+            F1UI.RowContainer {
+                Image(systemName: "calendar")
+                    .font(F1Theme.Typography.meta)
+                    .foregroundStyle(F1Theme.Colors.f1Red)
+            } content: {
                 Text(viewData.title)
-                    .font(.headline)
-
-                Spacer(minLength: 0)
-
+                    .font(F1Theme.Typography.rowTitle.monospacedDigit())
+                    .foregroundStyle(F1Theme.Colors.textPrimary)
+            } trailing: {
                 if viewData.showsWikipediaIndicator {
                     Label("Wikipedia", systemImage: "link")
-                        .font(.caption.weight(.semibold))
+                        .font(F1Theme.Typography.meta.weight(.semibold))
                         .labelStyle(.iconOnly)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(F1Theme.Colors.textSecondary)
                         .accessibilityLabel("Wikipedia available")
                 }
             }
-            .padding(.vertical, 4)
         }
     }
 }
@@ -49,4 +51,5 @@ public extension F1UI.Season {
         )
     )
     .padding()
+    .background(F1Theme.Colors.background)
 }

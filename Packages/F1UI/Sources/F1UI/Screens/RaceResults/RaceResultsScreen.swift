@@ -89,6 +89,8 @@ public struct RaceResultsScreen: View {
                     footerRetryView(error: error)
                 }
             }
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.isLoadingMore)
+            .animation(F1Theme.Motion.easeInOutStandard, value: state.error)
         }
     }
 
@@ -97,8 +99,10 @@ public struct RaceResultsScreen: View {
     }
 
     private func footerRetryView(error: String) -> some View {
-        VStack(spacing: 8) {
-            Text(error).font(.footnote).foregroundStyle(.secondary)
+        VStack(spacing: F1Theme.Spacing.s) {
+            Text(error)
+                .font(F1Theme.Typography.meta)
+                .foregroundStyle(F1Theme.Colors.textSecondary)
             Button("Retry") { Task { await loadNextPage() } }
         }
         .frame(maxWidth: .infinity)
@@ -169,25 +173,31 @@ public struct RaceResultsScreen: View {
     }
 
     static func makeRowData(from result: RaceResult) -> F1UI.Result.Row.ViewData {
-        .init(
+        let style = TeamStyleRegistry.style(for: result.constructor.id.rawValue)
+        return .init(
             id: "\(result.seasonId.rawValue)-\(result.round.rawValue)-\(result.driver.id.rawValue)",
             positionText: result.positionText,
+            position: result.position,
             driverName: "\(result.driver.givenName) \(result.driver.familyName)",
             constructorName: result.constructor.name,
             pointsText: "\(formatPoints(result.points)) pts",
-            resultText: makeResultText(from: result)
+            resultChip: makeResultChip(from: result),
+            teamStyleToken: style?.token,
+            teamShortCode: style?.shortCode
         )
     }
 
-    private static func makeResultText(from result: RaceResult) -> String {
+    private static func makeResultChip(from result: RaceResult) -> F1UI.Chip.ViewData {
         if let resultTime = result.resultTime {
             switch resultTime {
-            case .time(let value), .status(let value):
-                return value
+            case .time(let value):
+                return .init(text: value, style: .time)
+            case .status(let value):
+                return .init(text: value, style: .status)
             }
         }
 
-        return result.status
+        return .init(text: result.status, style: .status)
     }
 
     private static func formatPoints(_ points: Double) -> String {
@@ -222,8 +232,8 @@ extension RaceResultsScreen {
             round: .init(rawValue: "1"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultText: "1:31:44.742"),
-                    .init(id: "2024-1-sergio_perez", positionText: "2", driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultText: "+22.457s")
+                    .init(id: "2024-1-max_verstappen", positionText: "1", position: 1, driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultChip: .init(text: "1:31:44.742", style: .time), teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "2024-1-sergio_perez", positionText: "2", position: 2, driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultChip: .init(text: "+22.457s", style: .time), teamStyleToken: .redBull, teamShortCode: "RBR")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,
@@ -242,8 +252,8 @@ extension RaceResultsScreen {
             round: .init(rawValue: "1"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultText: "1:31:44.742"),
-                    .init(id: "2024-1-sergio_perez", positionText: "2", driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultText: "+22.457s")
+                    .init(id: "2024-1-max_verstappen", positionText: "1", position: 1, driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultChip: .init(text: "1:31:44.742", style: .time), teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "2024-1-sergio_perez", positionText: "2", position: 2, driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultChip: .init(text: "+22.457s", style: .time), teamStyleToken: .redBull, teamShortCode: "RBR")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: true,
@@ -262,8 +272,8 @@ extension RaceResultsScreen {
             round: .init(rawValue: "1"),
             previewState: .init(
                 items: [
-                    .init(id: "2024-1-max_verstappen", positionText: "1", driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultText: "1:31:44.742"),
-                    .init(id: "2024-1-sergio_perez", positionText: "2", driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultText: "+22.457s")
+                    .init(id: "2024-1-max_verstappen", positionText: "1", position: 1, driverName: "Max Verstappen", constructorName: "Red Bull Racing", pointsText: "25 pts", resultChip: .init(text: "1:31:44.742", style: .time), teamStyleToken: .redBull, teamShortCode: "RBR"),
+                    .init(id: "2024-1-sergio_perez", positionText: "2", position: 2, driverName: "Sergio Perez", constructorName: "Red Bull Racing", pointsText: "18 pts", resultChip: .init(text: "+22.457s", style: .time), teamStyleToken: .redBull, teamShortCode: "RBR")
                 ],
                 isLoadingInitial: false,
                 isLoadingMore: false,
