@@ -75,9 +75,9 @@ public struct RacesScreen: View {
         case .loaded(let races):
             List {
                 Section {
-                    F1UI.SeasonProgressBar(Self.makeSeasonProgressData(from: races))
+                    F1UI.SeasonProgressBar(Self.makeLoadedRacesProgressData(from: races))
                 } header: {
-                    Text("Season Progress")
+                    Text("Loaded Races")
                 }
 
                 ForEach(races, id: \.id) { race in
@@ -219,7 +219,7 @@ public struct RacesScreen: View {
         )
     }
 
-    static func makeSeasonProgressData(from races: [F1UI.Race.Row.ViewData]) -> F1UI.SeasonProgressBar.ViewData {
+    static func makeLoadedRacesProgressData(from races: [F1UI.Race.Row.ViewData]) -> F1UI.SeasonProgressBar.ViewData {
         .init(
             completed: races.count,
             total: races.count,
