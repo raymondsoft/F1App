@@ -78,14 +78,15 @@ public extension F1UI.Standing {
                         F1UI.PointsBar(
                             .init(
                                 value: pointsValue,
-                                maxValue: max(maxPointsValue, pointsValue)
+                                maxValue: max(maxPointsValue, pointsValue),
+                                style: .subtle
                             )
                         )
                         .frame(width: 80)
                     }
 
                     if let winsCount = viewData.winsCount {
-                        F1UI.WinsPips(.init(wins: winsCount, maxVisible: 8))
+                        F1UI.WinsPips(.init(wins: winsCount))
                     } else {
                         Text(viewData.winsText)
                             .font(F1Theme.Typography.meta)

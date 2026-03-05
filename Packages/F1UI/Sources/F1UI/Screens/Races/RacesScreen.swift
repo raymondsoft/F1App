@@ -73,31 +73,39 @@ public struct RacesScreen: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
         case .loaded(let races):
-            List(races, id: \.id) { race in
-                if let route = Self.makeRouteIdentifiers(from: race.id) {
-                    Section {
-                        NavigationLink {
-                            RaceResultsScreen(
-                                seasonId: route.seasonId,
-                                round: route.round,
-                                getRaceResultsPage: getRaceResultsPage
-                            )
-                        } label: {
-                            F1UI.Race.Row(race)
-                        }
+            List {
+                Section {
+                    F1UI.SeasonProgressBar(Self.makeSeasonProgressData(from: races))
+                } header: {
+                    Text("Season Progress")
+                }
 
-                        NavigationLink {
-                            QualifyingResultsScreen(
-                                seasonId: route.seasonId,
-                                round: route.round,
-                                getQualifyingResultsPage: getQualifyingResultsPage
-                            )
-                        } label: {
-                            Label("Qualifying", systemImage: "timer")
+                ForEach(races, id: \.id) { race in
+                    if let route = Self.makeRouteIdentifiers(from: race.id) {
+                        Section {
+                            NavigationLink {
+                                RaceResultsScreen(
+                                    seasonId: route.seasonId,
+                                    round: route.round,
+                                    getRaceResultsPage: getRaceResultsPage
+                                )
+                            } label: {
+                                F1UI.Race.Row(race)
+                            }
+
+                            NavigationLink {
+                                QualifyingResultsScreen(
+                                    seasonId: route.seasonId,
+                                    round: route.round,
+                                    getQualifyingResultsPage: getQualifyingResultsPage
+                                )
+                            } label: {
+                                Label("Qualifying", systemImage: "timer")
+                            }
                         }
+                    } else {
+                        F1UI.Race.Row(race)
                     }
-                } else {
-                    F1UI.Race.Row(race)
                 }
             }
 
@@ -208,6 +216,14 @@ public struct RacesScreen: View {
         return (
             seasonId: Season.ID(rawValue: components[0]),
             round: Race.Round(rawValue: components[1])
+        )
+    }
+
+    static func makeSeasonProgressData(from races: [F1UI.Race.Row.ViewData]) -> F1UI.SeasonProgressBar.ViewData {
+        .init(
+            completed: races.count,
+            total: races.count,
+            label: "\(races.count) / \(races.count) loaded"
         )
     }
 }

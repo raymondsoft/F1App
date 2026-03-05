@@ -19,7 +19,7 @@ import SwiftUI
                 VStack(alignment: .trailing, spacing: F1Theme.Spacing.xs) {
                     Text("575 pts")
                         .font(F1Theme.Typography.number)
-                    F1UI.PointsBar(.init(value: 575, maxValue: 700))
+                    F1UI.PointsBar(.init(value: 575, maxValue: 700, style: .subtle))
                         .frame(width: 88)
                 }
             }
@@ -40,9 +40,9 @@ import SwiftUI
             VStack(alignment: .leading, spacing: F1Theme.Spacing.s) {
                 F1UI.PointsBar(.init(value: 575, maxValue: 700))
                 F1UI.PointsBar(.init(value: 420, maxValue: 700))
-                F1UI.SeasonProgressBar(.init(completedRounds: 18, totalRounds: 24))
-                F1UI.WinsPips(.init(wins: 1, maxVisible: 8))
-                F1UI.WinsPips(.init(wins: 5, maxVisible: 8))
+                F1UI.SeasonProgressBar(.init(completed: 18, total: 24))
+                F1UI.WinsPips(.init(wins: 1))
+                F1UI.WinsPips(.init(wins: 5))
             }
 
             HStack(spacing: F1Theme.Spacing.s) {
@@ -81,7 +81,7 @@ import SwiftUI
                 VStack(alignment: .trailing, spacing: F1Theme.Spacing.xs) {
                     Text("575 pts")
                         .font(F1Theme.Typography.number)
-                    F1UI.PointsBar(.init(value: 575, maxValue: 700))
+                    F1UI.PointsBar(.init(value: 575, maxValue: 700, style: .subtle))
                         .frame(width: 88)
                 }
             }
@@ -102,9 +102,9 @@ import SwiftUI
             VStack(alignment: .leading, spacing: F1Theme.Spacing.s) {
                 F1UI.PointsBar(.init(value: 575, maxValue: 700))
                 F1UI.PointsBar(.init(value: 420, maxValue: 700))
-                F1UI.SeasonProgressBar(.init(completedRounds: 18, totalRounds: 24))
-                F1UI.WinsPips(.init(wins: 1, maxVisible: 8))
-                F1UI.WinsPips(.init(wins: 5, maxVisible: 8))
+                F1UI.SeasonProgressBar(.init(completed: 18, total: 24))
+                F1UI.WinsPips(.init(wins: 1))
+                F1UI.WinsPips(.init(wins: 5))
             }
 
             HStack(spacing: F1Theme.Spacing.s) {
