@@ -89,7 +89,7 @@ public extension F1UI.Qualifying {
         private func lapChip(label: String, value: String?) -> some View {
             F1UI.Chip(
                 .init(
-                    text: "\(label) \(value ?? "-")",
+                    text: "\(label) \(value ?? "—")",
                     style: value == nil ? .neutral : .time
                 )
             )

@@ -82,26 +82,18 @@ public struct RacesScreen: View {
 
                 ForEach(races, id: \.id) { race in
                     if let route = Self.makeRouteIdentifiers(from: race.id) {
-                        Section {
-                            NavigationLink {
-                                RaceResultsScreen(
+                        NavigationLink {
+                            RaceDetailScreen {
+                                await Self.loadRaceDetailState(
+                                    for: race,
                                     seasonId: route.seasonId,
                                     round: route.round,
-                                    getRaceResultsPage: getRaceResultsPage
-                                )
-                            } label: {
-                                F1UI.Race.Row(race)
-                            }
-
-                            NavigationLink {
-                                QualifyingResultsScreen(
-                                    seasonId: route.seasonId,
-                                    round: route.round,
+                                    getRaceResultsPage: getRaceResultsPage,
                                     getQualifyingResultsPage: getQualifyingResultsPage
                                 )
-                            } label: {
-                                Label("Qualifying", systemImage: "timer")
                             }
+                        } label: {
+                            F1UI.Race.Row(race)
                         }
                     } else {
                         F1UI.Race.Row(race)
@@ -158,7 +150,8 @@ public struct RacesScreen: View {
                 locality: race.circuit.location.locality,
                 country: race.circuit.location.country,
                 showsWikipediaIndicator: race.circuit.wikipediaURL != nil
-            )
+            ),
+            circuitWikipediaURL: race.circuit.wikipediaURL
         )
     }
 
@@ -224,6 +217,59 @@ public struct RacesScreen: View {
             completed: races.count,
             total: races.count,
             label: "\(races.count) / \(races.count) loaded"
+        )
+    }
+
+    static func loadRaceDetailState(
+        for race: F1UI.Race.Row.ViewData,
+        seasonId: Season.ID,
+        round: Race.Round,
+        getRaceResultsPage: @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<RaceResult>,
+        getQualifyingResultsPage: @Sendable (Season.ID, Race.Round, PageRequest) async throws -> Page<QualifyingResult>
+    ) async -> RaceDetailScreen.ViewState {
+        guard let request = try? PageRequest(limit: 30, offset: 0) else {
+            return .error("Failed to load race details. Please try again.")
+        }
+
+        do {
+            async let raceResultsPage = getRaceResultsPage(seasonId, round, request)
+            async let qualifyingResultsPage = getQualifyingResultsPage(seasonId, round, request)
+            let (resultsPage, qualifyingPage) = try await (raceResultsPage, qualifyingResultsPage)
+
+            return .loaded(
+                .init(
+                    header: makeDetailHeaderData(from: race),
+                    results: resultsPage.items.map(RaceResultsScreen.makeRowData),
+                    qualifying: qualifyingPage.items.map(QualifyingResultsScreen.makeRowData),
+                    circuit: makeCircuitSummaryData(from: race)
+                )
+            )
+        } catch {
+            return .error("Failed to load race details. Please try again.")
+        }
+    }
+
+    static func makeDetailHeaderData(from race: F1UI.Race.Row.ViewData) -> F1UI.Race.DetailHeader.ViewData {
+        .init(
+            id: race.id,
+            title: race.title,
+            dateText: race.dateText,
+            timeText: race.timeText,
+            circuitName: race.circuit.name,
+            locality: race.circuit.locality,
+            country: race.circuit.country,
+            wikipediaURL: race.circuitWikipediaURL
+        )
+    }
+
+    static func makeCircuitSummaryData(from race: F1UI.Race.Row.ViewData) -> F1UI.Circuit.Summary.ViewData {
+        .init(
+            id: race.circuit.id,
+            name: race.circuit.name,
+            locality: race.circuit.locality,
+            country: race.circuit.country,
+            coordinatesText: nil,
+            wikipediaURL: race.circuitWikipediaURL
         )
     }
 }

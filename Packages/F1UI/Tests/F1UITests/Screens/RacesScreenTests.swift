@@ -41,7 +41,8 @@ struct RacesScreenTests {
                     locality: "Sakhir",
                     country: "Bahrain",
                     showsWikipediaIndicator: true
-                )
+                ),
+                circuitWikipediaURL: URL(string: "https://en.wikipedia.org/wiki/Bahrain_International_Circuit")
             )
         ]
 
@@ -87,7 +88,8 @@ struct RacesScreenTests {
                     locality: "Jeddah",
                     country: "Saudi Arabia",
                     showsWikipediaIndicator: true
-                )
+                ),
+                circuitWikipediaURL: URL(string: "https://en.wikipedia.org/wiki/Jeddah_Corniche_Circuit")
             )
         ]
 

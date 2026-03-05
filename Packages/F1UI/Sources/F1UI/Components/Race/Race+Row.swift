@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 public extension F1UI.Race {
@@ -9,6 +10,7 @@ public extension F1UI.Race {
             public let dateText: String
             public let timeText: String?
             public let circuit: F1UI.Circuit.Row.ViewData
+            public let circuitWikipediaURL: URL?
 
             public init(
                 id: String,
@@ -16,7 +18,8 @@ public extension F1UI.Race {
                 title: String,
                 dateText: String,
                 timeText: String?,
-                circuit: F1UI.Circuit.Row.ViewData
+                circuit: F1UI.Circuit.Row.ViewData,
+                circuitWikipediaURL: URL? = nil
             ) {
                 self.id = id
                 self.roundText = roundText
@@ -24,6 +27,7 @@ public extension F1UI.Race {
                 self.dateText = dateText
                 self.timeText = timeText
                 self.circuit = circuit
+                self.circuitWikipediaURL = circuitWikipediaURL
             }
         }
 
