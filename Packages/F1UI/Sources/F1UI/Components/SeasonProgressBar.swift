@@ -2,13 +2,17 @@ import SwiftUI
 
 public extension F1UI {
     struct SeasonProgressBar: View {
-        public struct ViewData: Hashable, Sendable {
-            public let completedRounds: Int
-            public let totalRounds: Int
+        @State private var displayedProgress: Double = 0
 
-            public init(completedRounds: Int, totalRounds: Int) {
-                self.completedRounds = completedRounds
-                self.totalRounds = totalRounds
+        public struct ViewData: Hashable, Sendable {
+            public let completed: Int
+            public let total: Int
+            public let label: String?
+
+            public init(completed: Int, total: Int, label: String? = nil) {
+                self.completed = completed
+                self.total = total
+                self.label = label
             }
         }
 
@@ -20,30 +24,64 @@ public extension F1UI {
 
         public var body: some View {
             VStack(alignment: .leading, spacing: F1Theme.Spacing.xs) {
-                F1UI.PointsBar(
-                    .init(
-                        value: Double(viewData.completedRounds),
-                        maxValue: Double(max(viewData.totalRounds, 1))
-                    )
-                )
+                GeometryReader { proxy in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(F1Theme.Colors.separator.opacity(0.28))
+                        Capsule()
+                            .fill(F1Theme.Colors.fastestLapCyan)
+                            .frame(width: proxy.size.width * displayedProgress)
+                    }
+                }
+                .frame(height: 6)
+                .onAppear {
+                    withAnimation(F1Theme.Motion.easeInOutStandard) {
+                        displayedProgress = progress
+                    }
+                }
+                .onChange(of: viewData) { _, _ in
+                    withAnimation(F1Theme.Motion.easeInOutStandard) {
+                        displayedProgress = progress
+                    }
+                }
 
-                Text("\(viewData.completedRounds)/\(viewData.totalRounds) rounds")
+                Text(
+                    viewData.label
+                        ?? "\(max(viewData.completed, 0)) / \(max(viewData.total, 0))"
+                )
                     .font(F1Theme.Typography.meta.monospacedDigit())
                     .foregroundStyle(F1Theme.Colors.textSecondary)
             }
+        }
+
+        private var progress: Double {
+            Self.clampedProgress(completed: viewData.completed, total: viewData.total)
+        }
+
+        static func clampedProgress(completed: Int, total: Int) -> Double {
+            guard total > 0 else { return 0 }
+            return min(max(Double(completed) / Double(total), 0), 1)
         }
     }
 }
 
 #Preview("Season Progress Light") {
-    F1UI.SeasonProgressBar(.init(completedRounds: 18, totalRounds: 24))
-        .padding()
-        .preferredColorScheme(.light)
+    VStack(alignment: .leading, spacing: F1Theme.Spacing.s) {
+        F1UI.SeasonProgressBar(.init(completed: 0, total: 24))
+        F1UI.SeasonProgressBar(.init(completed: 10, total: 24))
+        F1UI.SeasonProgressBar(.init(completed: 24, total: 24, label: "Season Complete"))
+    }
+    .padding()
+    .preferredColorScheme(.light)
 }
 
 #Preview("Season Progress Dark") {
-    F1UI.SeasonProgressBar(.init(completedRounds: 18, totalRounds: 24))
-        .padding()
-        .background(F1Theme.Colors.background)
-        .preferredColorScheme(.dark)
+    VStack(alignment: .leading, spacing: F1Theme.Spacing.s) {
+        F1UI.SeasonProgressBar(.init(completed: 0, total: 24))
+        F1UI.SeasonProgressBar(.init(completed: 10, total: 24))
+        F1UI.SeasonProgressBar(.init(completed: 24, total: 24, label: "Season Complete"))
+    }
+    .padding()
+    .background(F1Theme.Colors.background)
+    .preferredColorScheme(.dark)
 }
